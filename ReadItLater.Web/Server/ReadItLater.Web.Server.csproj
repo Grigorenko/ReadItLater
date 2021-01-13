@@ -17,7 +17,6 @@
     <ProjectReference Include="..\..\ReadItLater.Data.EF\ReadItLater.Data.EF.csproj" />
     <ProjectReference Include="..\..\ReadItLater.Data\ReadItLater.Data.csproj" />
     <ProjectReference Include="..\Client\ReadItLater.Web.Client.csproj" />
-    <ProjectReference Include="..\Shared\ReadItLater.Web.Shared.csproj" />
   </ItemGroup>
 
 
