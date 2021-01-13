@@ -29,9 +29,10 @@ namespace ReadItLater.Web.Client.Pages
         private string tag;
         private bool isLoading;
 
-        protected override async Task OnInitializedAsync()
+        //protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(OnInitializedAsync)}";
+            var logMsg = $"{nameof(AddNewRef)}.{nameof(OnInitialized)}";
             Console.WriteLine(logMsg);
 
             isLoading = false;

@@ -1,8 +1,4 @@
-﻿using Core.Data.EFCore.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using ReadItLater.BL;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,18 +13,15 @@ namespace ReadItLater.Web.Server.Controllers
     [Route("[controller]")]
     public class FoldersController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> logger;
         private readonly IDapperContext<TagListItemProjection> tagDapperContext;
         private readonly IDapperContext<FolderListItemProjection> folderDapperContext;
         private readonly IDapperContext<BreadcrumbProjection> breadcrumbDapperContext;
 
         public FoldersController(
-            ILogger<WeatherForecastController> logger,
             IDapperContext<TagListItemProjection> tagDapperContext,
             IDapperContext<FolderListItemProjection> folderDapperContext,
             IDapperContext<BreadcrumbProjection> breadcrumbDapperContext)
         {
-            this.logger = logger;
             this.tagDapperContext = tagDapperContext;
             this.folderDapperContext = folderDapperContext;
             this.breadcrumbDapperContext = breadcrumbDapperContext;

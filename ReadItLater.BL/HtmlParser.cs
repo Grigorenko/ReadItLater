@@ -1,10 +1,10 @@
 ﻿using HtmlAgilityPack;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Text.Json;
 
 namespace ReadItLater.BL
 {
@@ -19,7 +19,7 @@ namespace ReadItLater.BL
                 var body = await GetBodyAsync(uri);
                 var queryParams = HttpUtility.ParseQueryString(body);
                 var json = queryParams.Get("player_response");
-                var obj = JsonConvert.DeserializeObject<YouTube>(json);
+                var obj = JsonSerializer.Deserialize<YouTube>(json);
 
                 return (obj.VideoDetails.Title, obj.VideoDetails.Thumbnail.Thumbnails.OrderByDescending(t => t.Width).First().Url);
             }

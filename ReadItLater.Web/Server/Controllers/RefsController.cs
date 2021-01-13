@@ -51,14 +51,14 @@ namespace ReadItLater.Web.Server.Controllers
             await dapperContext.ExecuteProcedureAsync("CreateRef", new { @ref = @ref.ToUdt(), tags = @ref.Tags.ToUdt() }, cancellationToken);
         }
 
-        private async Task<Ref> ExecStoredProcedureSingleWithMapping(string command, object? param, CancellationToken cancellationToken)
+        private async Task<Ref> ExecStoredProcedureSingleWithMapping(string command, object param, CancellationToken cancellationToken)
         {
             var results = await ExecStoredProcedureWithMapping(command, param, cancellationToken);
 
             return results.FirstOrDefault();
         }
 
-        private async Task<IEnumerable<Ref>> ExecStoredProcedureWithMapping(string command, object? param, CancellationToken cancellationToken)
+        private async Task<IEnumerable<Ref>> ExecStoredProcedureWithMapping(string command, object param, CancellationToken cancellationToken)
         {
             var lookup = new Dictionary<Guid, Ref>();
 
