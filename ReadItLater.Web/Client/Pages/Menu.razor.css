@@ -1,0 +1,70 @@
+﻿.menu {
+  background-color: #F0F0F0;
+  border-right: 1px solid #E4E4E4;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+  width: 16%;
+  justify-content: space-between;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo p {
+  color: #a9a9a9;
+  margin: 0;
+  line-height: 20px;
+}
+
+.add-new {
+  font-size: 20px;
+  color: #c7c7c7;
+  cursor: pointer;
+}
+
+.folders {
+  max-height: 32em;
+  overflow-x: auto;
+}
+
+.root-folders, .nested {
+  padding: 0;
+}
+
+  .root-folders .item {
+    margin: 0.5em 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+    .root-folders .item span {
+      font-size: 1.5em;
+    }
+
+      .root-folders .item span.fi-counter {
+        font-size: 1em;
+        line-height: 1.5em;
+      }
+
+  .nested .item {
+    padding: 0 0 0 1em;
+    margin: 0.4em 0;
+  }
+
+    .nested .item span {
+      font-size: 1em;
+    }
+
+      .nested .item span.fi-counter {
+        font-size: 1em;
+        line-height: 1em;
+      }
+
+.fi-counter {
+  color: #a9a9a9;
+}

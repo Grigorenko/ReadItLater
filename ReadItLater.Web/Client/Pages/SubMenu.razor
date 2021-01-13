@@ -1,0 +1,55 @@
+﻿@using ReadItLater.Data
+@using ReadItLater.Web.Client.Services
+
+@if (Context.Type == StateType.Add || Context.Type == StateType.Edit)
+{
+    <AddNewRef folders="folders"></AddNewRef>
+}
+else if (Context.Type == StateType.Show)
+{
+    <div class="sub-menu">
+        <Breadcrumbs FolderId="folderId" />
+        <div class="cf-items">
+            <p class="cf-all @(folderId.HasValue && !tagId.HasValue ? "selected" : "")"
+               @onclick="(e => TagChosen(null))">
+                <span>All</span>
+                <span class="fi-counter">@refsAllCount</span>
+            </p>
+            @if (tags != null)
+            {
+                <div class="cf-list">
+                    @if (tags.Any())
+                    {
+                        <div class="sorting">
+                            @if (true) //ToDo: implement correct condition
+                            {
+                                <i class="fa fa-sort-alpha-desc"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-sort-alpha-asc"></i>
+                            }
+                            @if (true) //ToDo: implement correct condition
+                            {
+                                <i class="fa fa-sort-numeric-asc"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-sort-numeric-desc"></i>
+                            }
+                        </div>
+                    }
+                    @foreach (var item in tags)
+                    {
+                        <div class="item @(tagId.HasValue && item.Id == tagId.Value ? "selected" : "")"
+                             @onclick="(e => TagChosen(item.Id))">
+                            <span># @item.Name</span>
+                            <span class="fi-counter">@item.RefsCount</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+@*https://faicons.com/*@

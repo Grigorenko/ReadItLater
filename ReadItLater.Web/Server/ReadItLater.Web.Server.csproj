@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ReadItLater.BL\ReadItLater.BL.csproj" />
+    <ProjectReference Include="..\..\ReadItLater.Data.EF\ReadItLater.Data.EF.csproj" />
+    <ProjectReference Include="..\..\ReadItLater.Data\ReadItLater.Data.csproj" />
+    <ProjectReference Include="..\Client\ReadItLater.Web.Client.csproj" />
+    <ProjectReference Include="..\Shared\ReadItLater.Web.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>

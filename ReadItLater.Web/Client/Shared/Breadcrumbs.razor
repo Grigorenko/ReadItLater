@@ -1,0 +1,16 @@
+﻿<div class="breadcrumbs">
+    @if (breadcrumbs != null)
+    {
+        foreach (var item in breadcrumbs)
+        {
+            if (FolderId != item.Id)
+            {
+                <p class="breadcrumb breadcrumb-active" @onclick="(e => FolderChosen(item.Id))">@item.Name</p>
+            }
+            else
+            {
+                <p class="breadcrumb">@item.Name</p>
+            }
+        }
+    }
+</div>

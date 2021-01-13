@@ -1,0 +1,75 @@
+﻿@using ReadItLater.Data
+
+<div class="sub-menu">
+    <div class="close" @onclick="(e => CloseForm(false))">
+        <i class="fa fa-close"></i>
+    </div>
+    @if (true@*!AppState.IsRefEditing*@)
+    {
+        <input type="text" @bind="url" placeholder="url" />
+        <button @onclick="Add">
+            Add&nbsp;
+            @if (isLoading)
+            {
+                @Loading();
+            }
+        </button>
+    }
+
+    @if (!model?.IsDefault ?? false)
+    {
+        <div class="info-block">
+            <img src="@model.Image" style="width:100%" />
+            <textarea rows="4" @bind="model.Title">@model.Title</textarea>
+            <div class="one-line">
+                <select @bind="model.FolderId" class="folder-select">
+                    @foreach (var item in folders)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+
+                        if (item.Folders?.Any() ?? false)
+                        {
+                            foreach (var nested in item.Folders)
+                            {
+                                <option value="@nested.Id">@($"- {nested.Name}")</option>
+                            }
+                        }
+                    }
+                </select>
+                <select @bind="model.Priority" class="priority-select">
+                    <option value="@(Priority.High)">High</option>
+                    <option value="@(Priority.Middle)">Medium</option>
+                    <option selected value="@(Priority.Low)">Low</option>
+                </select>
+            </div>
+            <div class="tag-section">
+                <div class="one-line">
+                    <input type="text" @bind="tag" placeholder="tag" />
+                    <i class="fa fa-plus" @onclick="AddTag"></i>
+                </div>
+                <div class="tag-exists">
+                    @if (model.Tags?.Any() ?? false)
+                    {
+                        foreach (var item in model.Tags)
+                        {
+                            <div class="badge">
+                                <p>#@item.Name</p>
+                                <i class="fa fa-close" @onclick="@(e => DeleteTag(item.Name))"></i>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            @*@if (AppState.IsRefEditing)
+            {
+                <button @onclick="Update">Update</button>
+                <button class="btn-delete" @onclick="Delete">Delete</button>
+            }
+            else
+            {
+                <button @onclick="Create">Create</button>
+            }*@
+                <button @onclick="Create">Create</button>
+        </div>
+    }
+</div>

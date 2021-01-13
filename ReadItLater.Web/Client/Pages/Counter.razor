@@ -1,0 +1,106 @@
+﻿@page "/counter"
+@using ReadItLater.Data
+@inject HttpClient Http
+
+@if (AddNew)
+{
+    <div class="menu sub-menu">
+        <input type="text" @bind="url" placeholder="url" />
+        <button @onclick="Add">Add</button>
+
+        @if (newRef != null)
+        {
+            <div style="max-width:300px">
+                <img src="@newRef.Image" style="width:100%" />
+                <input type="text" value="@newRef.Title" />
+                <select @bind="folderId">
+                    @foreach (var item in folders)
+                    {
+                        <option selected="@(folderNum++ == 0 ? "selected" : "")" value="@item.Id">@item.Name</option>
+                        if (item.Folders?.Any() ?? false)
+                        {
+                            foreach (var nested in item.Folders)
+                            {
+                                <option value="@nested.Id">@($"- {nested.Name}")</option>
+                            }
+                        }
+                    }
+                </select>
+                <select @bind="priority">
+                    <option value="@(Priority.High)">High</option>
+                    <option value="@(Priority.Middle)">Medium</option>
+                    <option selected value="@(Priority.Low)">Low</option>
+                </select>
+                <input type="text" @bind="refTags" />
+                <button @onclick="Create">Create</button>
+            </div>
+        }
+    </div>
+}
+else if (tags != null)
+{
+    <div class="menu sub-menu">
+        <div class="breadcrumbs">
+            <p class="breadcrumb"><a href="">category1</a></p>
+            <p class="breadcrumb"><a href="">category2</a></p>
+        </div>
+        <div class="cf-items">
+            <p class="cf-all"><span>All</span><span class="fi-counter">38</span></p>
+            <ul class="cf-list">
+                @foreach (var item in tags)
+                {
+                    <li @onclick="(e => TagChosen(e, item.Id))">
+                        <span># @item.Name</span>
+                        <span class="fi-counter">@item.RefsCount</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public FolderListItemProjection[] folders { get; set; }
+
+    [Parameter]
+    public TagListItemProjection[] tags { get; set; }
+
+    [Parameter]
+    public bool AddNew { get; set; }
+
+    private string url;
+    private Ref newRef;
+    private string refTags;
+    private int folderNum = 0;
+    private Priority priority;
+    private Guid? folderId;
+
+    public async Task Add()
+    {
+        var en = System.Web.HttpUtility.UrlEncode(url);
+        Console.WriteLine(en);
+        newRef = await Http.GetFromJsonAsync<Ref>("get-ref?url=" + en);
+
+        if (newRef.Tags != null)
+            refTags = string.Join(", ", newRef.Tags.Select(t => t.Name));
+    }
+
+    public async Task Create()
+    {
+        newRef.Priority = priority;
+        newRef.FolderId = folderId;
+        newRef.Tags = refTags?.Split(",")?.Select(x => x.Trim().Replace("#", ""))?.Where(x => !string.IsNullOrEmpty(x))?.Select(x => new Tag { Name = x })?.ToList();
+        var json = Newtonsoft.Json.JsonConvert.SerializeObject(newRef);
+
+        using (var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json"))
+        {
+            await Http.PostAsync("refs", content);
+        }
+    }
+
+    public async Task TagChosen(MouseEventArgs e, Guid id)
+    {
+
+    }
+}

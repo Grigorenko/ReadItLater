@@ -1,0 +1,40 @@
+﻿
+@if (folders != null)
+{
+    <div class="menu">
+        <div class="top">
+            <div class="logo">
+                <p>Ril</p>
+            </div>
+            <div class="add-new" @onclick="AddNew">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </div>
+        </div>
+            <div class="folders">
+                <div class="root-folders">
+                    @foreach (var item in folders)
+                    {
+                        <div class="item" @onclick="@(e => FolderChosen(item.Id))">
+                            <span>@item.Name</span>
+                            <span class="fi-counter">@(item.RefsCount > 0 ? item.RefsCount.ToString() : "")</span>
+                        </div>
+                        @if (item.Folders?.Any() ?? false)
+                        {
+                            <div class="nested">
+                                @foreach (var nested in item.Folders)
+                                {
+                                    <div class="item" @onclick="@(e => FolderChosen(nested.Id))">
+                                        <span>@nested.Name</span>
+                                        <span class="fi-counter">@(nested.RefsCount > 0 ? nested.RefsCount.ToString() : "")</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            <Community />
+    </div>
+
+    <SubMenu folders="folders" refsAllCount="refsAllCount"></SubMenu>
+}

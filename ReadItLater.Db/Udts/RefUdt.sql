@@ -1,0 +1,11 @@
+﻿CREATE TYPE [RefUdt]
+AS TABLE
+(
+	[Id] UNIQUEIDENTIFIER, 
+	[FolderId] UNIQUEIDENTIFIER, 
+	[Title] NVARCHAR(500) NOT NULL, 
+	[Url] NVARCHAR(500) NOT NULL, 
+	[Image] NVARCHAR(500), 
+	[Priority] INT, 
+	[Date] DATETIME
+)

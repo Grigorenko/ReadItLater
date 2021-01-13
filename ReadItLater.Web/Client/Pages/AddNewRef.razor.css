@@ -1,0 +1,97 @@
+﻿.sub-menu {
+  background-color: #fff;
+  border-right: 1px solid #E4E4E4;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+  width: 16%;
+  justify-content: normal;
+}
+
+.close {
+  color: #E4E4E4;
+  font-size: 20px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+input, select {
+  border: none;
+  border-bottom: 1px solid;
+  font-size: 1em;
+  margin: 1em 0 0;
+}
+
+button {
+  background-color: #ececec;
+  border: none;
+  font-size: 1em;
+  margin: 1em 0 0;
+  line-height: 2em;
+}
+
+  button.delete {
+    background: red;
+    color: white;
+  }
+
+img {
+  margin: 1em 0 0;
+}
+
+textarea {
+  margin: 1em 0 0;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.info-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.folder-select {
+  width: 67%;
+  margin-right: 3%;
+}
+
+.priority-select {
+  width: 30%;
+}
+
+.tag-section input {
+  width: 100%;
+}
+
+.tag-section i {
+  color: #E4E4E4;
+  font-size: 1em;
+  margin: 1em 0 0;
+  margin-left: 3%;
+  line-height: 1em;
+}
+
+.tag-exists {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 1em;
+}
+
+.badge {
+  margin: 0;
+  margin-right: 0.5em;
+  color: #b1b1b1;
+  display: flex;
+  flex-direction: row;
+  line-height: 1em;
+}
+
+  .badge p {
+    margin: 0;
+    white-space: nowrap;
+  }
+  .badge i {
+    margin: 0;
+    margin-left: 3%;
+  }

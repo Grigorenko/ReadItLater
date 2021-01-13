@@ -1,0 +1,20 @@
+﻿
+<div class="item">
+    <img src="@Item.Image">
+    <div class="info">
+        <div class="settings">
+            <p class="item-date">@Item.Date</p>
+            <i class="fa fa-sliders" @onclick="EditRef"></i>
+        </div>
+        <p class="item-title"><a href="@Item.Url" target="_blank">@Item.Title</a></p>
+        <div class="item-tags">
+            @if (Item.Tags != null)
+            {
+                foreach (var item in Item.Tags)
+                {
+                    <p class="item-tag" @onclick="(e => ChooseTag(item.Id))">#@item.Name</p>
+                }
+            }
+        </div>
+    </div>
+</div>

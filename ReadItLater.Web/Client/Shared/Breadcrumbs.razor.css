@@ -1,0 +1,18 @@
+﻿.breadcrumbs {
+  min-height: 5em;
+}
+
+.breadcrumb {
+  font-size: 0.8em;
+  margin: 0.2em 0;
+  color: #a9a9a9;
+}
+
+  .breadcrumb a {
+    text-decoration: none;
+    color: #a9a9a9;
+  }
+
+.breadcrumb-active {
+  cursor: pointer;
+}
