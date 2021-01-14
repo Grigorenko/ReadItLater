@@ -43,7 +43,7 @@ namespace ReadItLater.Web.Client.Pages
             Console.WriteLine(logMsg);
 
             //isLoading = true;
-            AppState.StartRefEditing(Item.Id);
+            AppState.RefEditing(Item.Id);
             //isLoading = false;
 
             AppState.WriteStatusLog(logMsg);

@@ -30,7 +30,7 @@ button {
   line-height: 2em;
 }
 
-  button.delete {
+  button.btn-delete {
     background: red;
     color: white;
   }

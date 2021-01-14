@@ -51,6 +51,18 @@ namespace ReadItLater.Web.Server.Controllers
             await dapperContext.ExecuteProcedureAsync("CreateRef", new { @ref = @ref.ToUdt(), tags = @ref.Tags.ToUdt() }, cancellationToken);
         }
 
+        [HttpPut]
+        public async Task Update([FromBody] Ref @ref, CancellationToken cancellationToken)
+        {
+            await dapperContext.ExecuteProcedureAsync("UpdateRef", new { @ref = @ref.ToUdt(), tags = @ref.Tags.ToUdt() }, cancellationToken);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task Delete([FromRoute]Guid id, CancellationToken cancellationToken)
+        {
+            await dapperContext.ExecuteProcedureAsync("DeleteRef", new { id }, cancellationToken);
+        }
+
         private async Task<Ref> ExecStoredProcedureSingleWithMapping(string command, object param, CancellationToken cancellationToken)
         {
             var results = await ExecStoredProcedureWithMapping(command, param, cancellationToken);

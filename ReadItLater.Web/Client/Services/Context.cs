@@ -11,8 +11,6 @@ namespace ReadItLater.Web.Client.Services
         }
         public Guid? FolderId { get; set; }
         public Guid? TagId { get; set; }
-        //public bool IsRefAdding { get; private set; }
-        //public bool IsRefEditing { get; private set; }
         public Guid EditingRefId { get; private set; }
 
         public StateType Type => State.Type;
@@ -21,12 +19,8 @@ namespace ReadItLater.Web.Client.Services
 
         public void FolderChosen(Guid folderId)
         {
-            //State.FolderId = folderId;
-            //State.TagId = null;
             Show(folderId: folderId);
             State.Show(FolderId, TagId);
-            //Console.WriteLine("input folderId: " + folderId);
-            //Console.WriteLine("State.FolderId: " + FolderId);
             FolderChanged?.Invoke(FolderId.Value, TagId);
         }
 
@@ -34,7 +28,6 @@ namespace ReadItLater.Web.Client.Services
 
         public void TagChosen(Guid? tagId)
         {
-            //State.TagId = tagId;
             Show(tagId: tagId);
             State.Show(FolderId, TagId);
             TagChanged?.Invoke(FolderId.Value, TagId);
@@ -42,13 +35,11 @@ namespace ReadItLater.Web.Client.Services
 
         private void Show(Guid? folderId = null, Guid? tagId = null)
         {
-            //Console.WriteLine($"{nameof(State)}.{nameof(Show)}(folderId:{folderId}, tagId:{tagId})");
             if (folderId is null && FolderId is null)
                 throw new ArgumentNullException();
 
             if (folderId != null)
                 FolderId = folderId;
-            //Console.WriteLine("State.FolderId = " + FolderId);
 
             TagId = tagId;
         }
@@ -61,8 +52,6 @@ namespace ReadItLater.Web.Client.Services
         }
 
         public event Action RefAdded;
-        //public event Action StartRefAdded;
-        //public event Action EndRefAdded;
 
         public void RefAdding()
         {
@@ -85,50 +74,13 @@ namespace ReadItLater.Web.Client.Services
             }
         }
 
-        //public void StartRefAdding()
-        //{
-        //    State.AddNew();
-        //    //if (IsRefAdding)
-        //    //    return;
+        public event Action<Guid> RefEdited;
 
-        //    //IsRefEditing = false;
-        //    //IsRefAdding = true;
-        //    StartRefAdded?.Invoke();
-        //}
-
-        //public void EndRefAdding()
-        //{
-        //    //if (!IsRefAdding)
-        //    //    return;
-
-        //    //IsRefAdding = false;
-        //    EndRefAdded?.Invoke();
-        //}
-
-        public event Action<Guid> StartRefEdited;
-        public event Action<Guid> EndRefEdited;
-
-        public void StartRefEditing(Guid refId)
+        public void RefEditing(Guid refId)
         {
             EditingRefId = refId;
             State.Edit(refId);
-            //if (IsRefEditing && EditingRefId == refId)
-            //    return;
-
-            //IsRefAdding = false;
-            //IsRefEditing = true;
-            //EditingRefId = refId;
-            StartRefEdited?.Invoke(refId);
-        }
-
-        public void EndRefEditing(Guid refId)
-        {
-            //if (!IsRefEditing)
-            //    return;
-
-            //IsRefEditing = false;
-            //EditingRefId = new Guid();
-            EndRefEdited?.Invoke(refId);
+            RefEdited?.Invoke(EditingRefId);
         }
 
         public override string ToString()
@@ -138,9 +90,7 @@ namespace ReadItLater.Web.Client.Services
                 .Append($"{nameof(Type)}: {Type}, ")
                 .Append($"{nameof(FolderId)}: {FolderId}, ")
                 .Append($"{nameof(TagId)}: {TagId}, ")
-                //.Append($"{nameof(IsRefAdding)}: {IsRefAdding}, ")
-                //.Append($"{nameof(IsRefEditing)}: {IsRefEditing}, ")
-                //.Append($"{nameof(EditingRefId)}: {EditingRefId}")
+                .Append($"{nameof(EditingRefId)}: {EditingRefId}")
                 .Append(" }")
                 .ToString();
         }

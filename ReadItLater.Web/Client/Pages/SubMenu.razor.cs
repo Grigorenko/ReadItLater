@@ -22,7 +22,6 @@ namespace ReadItLater.Web.Client.Pages
         [Parameter]
         public int refsAllCount { get; set; }
 
-        //private BreadcrumbProjection[] breadcrumbs;
         private TagListItemProjection[] tags;
         private Guid? folderId;
         private Guid? tagId;
@@ -37,8 +36,7 @@ namespace ReadItLater.Web.Client.Pages
             Context.TagChanged += (_, _) => StateHasChanged();
             Context.RefAdded += () => StateHasChanged();
             Context.Closed += () => StateHasChanged();
-            //AppState.EndRefAdded += () => CloseAddingForm();
-            //AppState.StartRefEdited += _ => StateHasChanged(); //id => EditMode(id);
+            Context.RefEdited += id => StateHasChanged();
             folderId = null;
             tagId = null;
 
@@ -59,7 +57,6 @@ namespace ReadItLater.Web.Client.Pages
             var logMsg = $"{nameof(SubMenu)}.{nameof(FolderChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
             Console.WriteLine(logMsg);
 
-            //breadcrumbs = await Http.GetFromJsonAsync<BreadcrumbProjection[]>($"Folders/{folderId}/breadcrumbs");
             tags = await Http.GetFromJsonAsync<TagListItemProjection[]>($"Folders/{folderId}/tags");
             this.folderId = folderId;
             this.tagId = tagId;
@@ -114,6 +111,7 @@ namespace ReadItLater.Web.Client.Pages
             Context.TagChanged -= (_, _) => StateHasChanged();
             Context.RefAdded -= () => StateHasChanged();
             Context.Closed -= () => StateHasChanged();
+            Context.RefEdited -= id => StateHasChanged();
         }
     }
 }

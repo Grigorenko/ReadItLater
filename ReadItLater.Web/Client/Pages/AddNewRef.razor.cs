@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -37,7 +38,7 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = false;
             model = new RefProjection();
-            //AppState.StartRefEdited += async id => await EditMode(id);
+            AppState.RefEdited += async id => await RefEditedEventHandler(id);
 
             //kostil
             //if (AppState.IsRefEditing)
@@ -46,24 +47,26 @@ namespace ReadItLater.Web.Client.Pages
             AppState.WriteStatusLog(logMsg);
         }
 
-        //private async Task EditMode(Guid id)
-        //{
-        //    Console.WriteLine($"{nameof(AddNewRef)}.{nameof(EditMode)}(id:{id})");
+        private async Task RefEditedEventHandler(Guid id)
+        {
+            var logMsg = $"{nameof(AddNewRef)}.{nameof(RefEditedEventHandler)}(id:{id})";
+            Console.WriteLine(logMsg);
 
-        //    if (AppState.IsRefEditing && AppState.EditingRefId != default)
-        //    {
-        //        model = await Http.GetFromJsonAsync<RefProjection>($"refs/{id}");
-        //        model.IsDefault = false;
+            if (AppState.Type != StateType.Edit)
+                throw new Exception(logMsg);
 
-        //        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(model));
+            model = await Http.GetFromJsonAsync<RefProjection>($"refs/{id}");
+            model.IsDefault = false;
 
-        //        //StateHasChanged();
-        //    }
+            //Console.WriteLine(JsonSerializer.Serialize(model));
 
-        //    AppState.WriteStatusLog();
-        //}
+            StateHasChanged();
 
-        private async Task Add()//mode
+
+            AppState.WriteStatusLog(logMsg);
+        }
+
+        private async Task Add()
         {
             if (isLoading)
                 return;
@@ -95,7 +98,7 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = true;
             AddTag();
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var json = JsonSerializer.Serialize(model);
 
             using (var content = new StringContent(model.ToString(), Encoding.UTF8, MediaTypeNames.Application.Json))
             {
@@ -121,7 +124,7 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = true;
             AddTag();
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+            var json = JsonSerializer.Serialize(model);
             Console.WriteLine(json);
 
             using (var content = new StringContent(model.ToString(), Encoding.UTF8, MediaTypeNames.Application.Json))
@@ -146,7 +149,7 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = true;
 
-            await Http.DeleteAsync($"refs?id={model.Id}");
+            await Http.DeleteAsync($"refs/{model.Id}");
 
             isLoading = false;
 
@@ -159,12 +162,6 @@ namespace ReadItLater.Web.Client.Pages
         {
             var logMsg = $"{nameof(AddNewRef)}.{nameof(CloseForm)}";
             Console.WriteLine(logMsg);
-
-            //    if (AppState.IsRefAdding)
-            //    AppState.EndRefAdding();
-
-            //else if (AppState.IsRefEditing)
-            //    AppState.EndRefEditing(model.Id);
 
             AppState.Close();
 
@@ -227,7 +224,7 @@ namespace ReadItLater.Web.Client.Pages
 
         public void Dispose()
         {
-            //AppState.StartRefEdited -= async id => await EditMode(id);
+            AppState.RefEdited -= async id => await RefEditedEventHandler(id);
         }
     }
 }
