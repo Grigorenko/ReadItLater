@@ -3,10 +3,9 @@
 	@tags [TagUdt] READONLY
 AS
 	DECLARE @currentId UNIQUEIDENTIFIER;
-	SELECT TOP 1 @currentId [Id] FROM @ref;
+	SELECT TOP 1 @currentId = [Id] FROM @ref;
 
 	UPDATE T SET
-		T.[Id] = S.[Id], 
 		T.[FolderId] = S.[FolderId], 
 		T.[Title] = S.[Title], 
 		T.[Url] = S.[Url], 
@@ -15,6 +14,7 @@ AS
 		T.[Date] = S.[Date]
 	FROM [Refs] AS T
 	INNER JOIN @ref AS S ON S.[Id] = T.[Id]
+	WHERE T.[Id] = @currentId;
 
 	DECLARE @defaultGuid UNIQUEIDENTIFIER = 0x0;
 

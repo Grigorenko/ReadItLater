@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Pages
 {
-    public partial class SubMenu : IDisposable
+    public partial class TagsSelector : IDisposable
     {
         [Inject]
         public HttpClient Http { get; set; }
@@ -17,23 +17,22 @@ namespace ReadItLater.Web.Client.Pages
         public Context Context { get; set; }
 
         [Parameter]
-        public FolderListItemProjection[] folders { get; set; }
-
-        [Parameter]
         public int refsAllCount { get; set; }
+        //ToDo: think about getting this value from query for all tags by folder
 
         private Shared.Breadcrumbs breadcrumbsComponent;
-        private AddNewRef addNewRefComponent;
+        //private AddNewRef addNewRefComponent;
         private TagListItemProjection[] tags;
         private Guid? folderId;
         private Guid? tagId;
 
         protected override void OnInitialized()
         {
-            var logMsg = $"{nameof(SubMenu)}.{nameof(OnInitialized)}";
+            var logMsg = $"{nameof(TagsSelector)}.{nameof(OnInitialized)}";
             Console.WriteLine(logMsg);
 
-            //Context.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            Context.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            Context.StateChanged += () => StateHasChanged();
             //Context.DataChanged += async (folderId, tagId) => await DataChangedEventHandler(folderId, tagId);
             //Context.TagChanged += (_, _) => StateHasChanged();
             //Context.RefAdded += () => StateHasChanged();
@@ -45,47 +44,49 @@ namespace ReadItLater.Web.Client.Pages
             Context.WriteStatusLog(logMsg);
         }
 
-        private async Task RefEditedEventHandler(Guid id)
+        private void TagChosen(Guid? id)
         {
-            var logMsg = $"{nameof(SubMenu)}.{nameof(RefEditedEventHandler)}(id:{id})";
+            var logMsg = $"{nameof(SubMenu)}.{nameof(TagChosen)}(id:{id})";
             Console.WriteLine(logMsg);
+
+            Context.TagChosen(id);
+            this.tagId = id;
+
+            Context.WriteStatusLog(logMsg);
+        }
+
+        private async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
+        {
+            var logMsg = $"{nameof(SubMenu)}.{nameof(FolderChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
+            Console.WriteLine(logMsg);
+
+            tags = await Http.GetFromJsonAsync<TagListItemProjection[]>($"Folders/{folderId}/tags");
+            this.folderId = folderId;
+            this.tagId = tagId;
 
             StateHasChanged();
-            if (addNewRefComponent is null)
-                throw new NullReferenceException($"{nameof(addNewRefComponent)} is null.");
 
-                await addNewRefComponent.RefEditedEventHandler(id);
-            //await InvokeAsync(async () =>
-            //{
-            //    await addNewRefComponent.RefEditedEventHandler(id);
-            //    StateHasChanged();
-            //});
+            if (breadcrumbsComponent is null)
+                throw new NullReferenceException($"{nameof(breadcrumbsComponent)} is null.");
+
+            await breadcrumbsComponent?.FolderChangedEventHandler(folderId, tagId);
 
             Context.WriteStatusLog(logMsg);
         }
 
-        
-
-        private async Task DataChangedEventHandler(Guid? folderId, Guid? tagId)
-        {
-            var logMsg = $"{nameof(SubMenu)}.{nameof(DataChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
-            Console.WriteLine(logMsg);
-
-            if (folderId.HasValue)
-            {
-                tags = await Http.GetFromJsonAsync<TagListItemProjection[]>($"Folders/{folderId}/tags");
-                this.folderId = folderId;
-                this.tagId = tagId;
-
-                StateHasChanged();
-            }
-
-            Context.WriteStatusLog(logMsg);
-        }
+        private string GetSelectedTagClassName(Guid? tagId = null) =>
+            !this.tagId.HasValue && tagId is null
+                ? "selected"
+                : this.tagId.HasValue && tagId == this.tagId.Value
+                    ? "selected"
+                    : string.Empty;
+        // @(folderId.HasValue && !tagId.HasValue ? "selected" : "")
+        //@(tagId.HasValue && item.Id == tagId.Value ? "selected" : "")
 
         public void Dispose()
         {
-            //Context.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            Context.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            Context.StateChanged -= () => StateHasChanged();
             //Context.DataChanged -= async (folderId, tagId) => await DataChangedEventHandler(folderId, tagId);
             //Context.TagChanged -= (_, _) => StateHasChanged();
             //Context.RefAdded -= () => StateHasChanged();

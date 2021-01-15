@@ -16,7 +16,7 @@ namespace ReadItLater.Web.Client.Pages
         public HttpClient Http { get; set; }
 
         [Inject]
-        public AppState AppState { get; set; }
+        public Context AppState { get; set; }
 
         private FolderListItemProjection[] folders;
         private int refsAllCount;

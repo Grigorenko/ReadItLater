@@ -8,7 +8,7 @@ namespace ReadItLater.Data
     {
         public bool IsDefault { get; set; } = true;
 
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid? FolderId { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }

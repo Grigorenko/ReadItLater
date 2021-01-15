@@ -18,6 +18,7 @@ namespace ReadItLater.Web.Client.Services
         public override void Close()
         {
             Console.WriteLine($"{nameof(EditState)}.{nameof(Close)} => {nameof(CloseState)}");
+            context.EditingRefId = null;
             context.ChangeState(new CloseState());
         }
 

@@ -14,7 +14,7 @@ namespace ReadItLater.Web.Client.Shared
         public HttpClient Http { get; set; }
 
         [Inject]
-        public AppState Context { get; set; }
+        public Context Context { get; set; }
 
         [Parameter]
         public Guid? FolderId { get; set; }
@@ -27,12 +27,12 @@ namespace ReadItLater.Web.Client.Shared
             var logMsg = $"{nameof(Breadcrumbs)}.{nameof(OnInitialized)}";
             Console.WriteLine(logMsg);
 
-            Context.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            //Context.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
 
             Context.WriteStatusLog(logMsg);
         }
 
-        private async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
+        public async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
         {
             var logMsg = $"{nameof(Breadcrumbs)}.{nameof(FolderChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
             Console.WriteLine(logMsg);
@@ -56,7 +56,7 @@ namespace ReadItLater.Web.Client.Shared
 
         public void Dispose()
         {
-            Context.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
+            //Context.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
         }
     }
 }

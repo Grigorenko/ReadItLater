@@ -3,15 +3,15 @@ using System.Text;
 
 namespace ReadItLater.Web.Client.Services
 {
-    public class AppState // Context
+    public class Context
     {
-        public AppState()
+        public Context()
         {
             ChangeState(new CloseState());
         }
         public Guid? FolderId { get; set; }
         public Guid? TagId { get; set; }
-        public Guid EditingRefId { get; private set; }
+        public Guid? EditingRefId { get; set; }
 
         public StateType Type => State.Type;
 
@@ -80,12 +80,12 @@ namespace ReadItLater.Web.Client.Services
         {
             EditingRefId = refId;
             State.Edit(refId);
-            RefEdited?.Invoke(EditingRefId);
+            RefEdited?.Invoke(EditingRefId.Value);
         }
 
         public override string ToString()
         {
-            return new StringBuilder(nameof(AppState) + ": ")
+            return new StringBuilder(nameof(Context) + ": ")
                 .Append("{ ")
                 .Append($"{nameof(Type)}: {Type}, ")
                 .Append($"{nameof(FolderId)}: {FolderId}, ")
@@ -97,12 +97,15 @@ namespace ReadItLater.Web.Client.Services
 
         public void WriteStatusLog(string prefix) => Console.WriteLine(prefix + ": " + ToString());
 
+
+        public event Action StateChanged;
         public State State { get; private set; }
         internal void ChangeState(State state)
         {
             Console.WriteLine($"State changed: {(State?.Type.ToString() ?? "empty")} => {state.Type}");
             State = state;
             State.SetContext(this);
+            StateChanged?.Invoke();
         }
     }
 }

@@ -14,12 +14,17 @@
 }
 
   .manage-panel .search {
-    width: 25%;
+    width: calc(100% / 3);
+    margin-right: 2em;
   }
+
+    .manage-panel .search input {
+      width: 100%;
+    }
 
   .manage-panel .tools {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     align-items: center;
   }
 
@@ -27,17 +32,31 @@
       margin: 0 1em;
     }
 
+.badges {
+  display: flex;
+}
+
 .badge {
   display: flex;
   flex-direction: row;
+  margin-left: 0.2em;
+  text-transform: lowercase;
 }
 
   .badge p {
     margin: 0;
+    border: 1px solid #737373;
+    padding: 0.2em 0.5em;
+    font-size: 0.9em;
   }
 
     .badge p.title {
       background-color: #c7c7c7;
+      border-right: none;
+    }
+
+    .badge p i {
+      color: #737373;
     }
 
 .rows {

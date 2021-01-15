@@ -1,0 +1,32 @@
+﻿
+<div class="sub-menu">
+    <div class="one-line">
+        <select @bind="orderBy" class="sorting-items">
+            @foreach (var item in orderingItemNames)
+            {
+                if (selected.ContainsKey(item))
+                {
+                    <option disabled value="@item">@item</option>
+                }
+                else
+                {
+                    <option value="@item">@item</option>
+                }
+            }
+        </select>
+        <select @bind="direction" class="sorting-items">
+            @foreach (var item in (Direction[])Enum.GetValues(typeof(Direction)))
+            {
+                <option value="@item.ToString()">@item.ToString()</option>
+            }
+        </select>
+        <i class="fa fa-plus" @onclick="AddBadge"></i>
+    </div>
+
+    <div class="already-selected">
+        @foreach (var item in selected)
+        {
+            <SortingBadge Key="@item.Key" Value="@item.Value" DeleteBadgeCallback="DeleteBadgeCallbackHandler" />
+        }
+    </div>
+</div>

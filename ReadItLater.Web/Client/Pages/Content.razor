@@ -4,19 +4,30 @@
 {
     <div class="content">
         <div class="manage-panel">
-            <Search />
             <div class="tools">
                 <div class="ordering">
                     <i class="fa fa-sort-amount-asc"></i>
                     @*<i class="fa fa-sort-amount-desc"></i>*@
                 </div>
                 <div class="badges">
+                    @*SortingBadge*@
                     <div class="badge">
                         <p class="title">Date:</p>
-                        <p>Ascending</p>
+                        <p>
+                            Ascending
+                            <i class="fa fa-close"></i>
+                        </p>
+                    </div>
+                    <div class="badge">
+                        <p class="title">priority:</p>
+                        <p>
+                            descending
+                            <i class="fa fa-close"></i>
+                        </p>
                     </div>
                 </div>
             </div>
+            <Search />
         </div>
         <div class="rows">
             @for (int j = 0; j < 3; j++)

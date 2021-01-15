@@ -20,7 +20,7 @@ namespace ReadItLater.Web.Client.Pages
         public HttpClient Http { get; set; }
 
         [Inject]
-        public AppState AppState { get; set; }
+        public Context Context { get; set; }
 
         [Parameter]
         public FolderListItemProjection[] folders { get; set; }
@@ -30,7 +30,6 @@ namespace ReadItLater.Web.Client.Pages
         private string tag;
         private bool isLoading;
 
-        //protected override async Task OnInitializedAsync()
         protected override void OnInitialized()
         {
             var logMsg = $"{nameof(AddNewRef)}.{nameof(OnInitialized)}";
@@ -38,24 +37,24 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = false;
             model = new RefProjection();
-            AppState.RefEdited += async id => await RefEditedEventHandler(id);
+            Context.RefEdited += async id => await RefEditedEventHandler(id);
+            Context.StateChanged += () => StateChangedEventHandler();
 
-            //kostil
-            //if (AppState.IsRefEditing)
-            //    await EditMode(AppState.EditingRefId);
-
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
-        private async Task RefEditedEventHandler(Guid id)
+        public async Task RefEditedEventHandler(Guid id)
         {
             var logMsg = $"{nameof(AddNewRef)}.{nameof(RefEditedEventHandler)}(id:{id})";
             Console.WriteLine(logMsg);
 
-            if (AppState.Type != StateType.Edit)
+            if (Context.Type != StateType.Edit)
                 throw new Exception(logMsg);
 
-            model = await Http.GetFromJsonAsync<RefProjection>($"refs/{id}");
+            var res = await Http.GetFromJsonAsync<RefProjection>($"refs/{id}");
+
+            Console.WriteLine(JsonSerializer.Serialize(res, new JsonSerializerOptions { WriteIndented = true }));
+            model = res;
             model.IsDefault = false;
 
             //Console.WriteLine(JsonSerializer.Serialize(model));
@@ -63,7 +62,13 @@ namespace ReadItLater.Web.Client.Pages
             StateHasChanged();
 
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
+        }
+
+        private void StateChangedEventHandler()
+        {
+            model = new RefProjection();
+            StateHasChanged();
         }
 
         private async Task Add()
@@ -83,7 +88,7 @@ namespace ReadItLater.Web.Client.Pages
 
             isLoading = false;
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Create()
@@ -109,7 +114,7 @@ namespace ReadItLater.Web.Client.Pages
 
             CloseForm(contentChanged: true);
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Update()
@@ -136,7 +141,7 @@ namespace ReadItLater.Web.Client.Pages
 
             CloseForm(contentChanged: true);
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Delete()
@@ -155,7 +160,7 @@ namespace ReadItLater.Web.Client.Pages
 
             CloseForm(contentChanged: true);
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private void CloseForm(bool contentChanged = false)
@@ -163,14 +168,14 @@ namespace ReadItLater.Web.Client.Pages
             var logMsg = $"{nameof(AddNewRef)}.{nameof(CloseForm)}";
             Console.WriteLine(logMsg);
 
-            AppState.Close();
+            Context.Close();
 
             model = new RefProjection();
 
             if (contentChanged)
-                AppState.ContentChanged();
+                Context.ContentChanged();
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private void AddTag()
@@ -195,7 +200,7 @@ namespace ReadItLater.Web.Client.Pages
 
             tag = string.Empty;
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private void DeleteTag(string name)
@@ -212,7 +217,7 @@ namespace ReadItLater.Web.Client.Pages
             if (model.Tags.Any(x => x.Name.Equals(name)))
                 model.Tags = model.Tags.Where(t => !t.Name.Equals(name)).ToList();
 
-            AppState.WriteStatusLog(logMsg);
+            Context.WriteStatusLog(logMsg);
         }
 
         private RenderFragment Loading() => b =>
@@ -222,9 +227,12 @@ namespace ReadItLater.Web.Client.Pages
             b.CloseElement();
         };
 
+        private Priority[] PriorityOptions => (Priority[])Enum.GetValues(typeof(Priority));
+
         public void Dispose()
         {
-            AppState.RefEdited -= async id => await RefEditedEventHandler(id);
+            Context.RefEdited -= async id => await RefEditedEventHandler(id);
+            Context.StateChanged -= () => StateChangedEventHandler();
         }
     }
 }

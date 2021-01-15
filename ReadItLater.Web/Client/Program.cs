@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReadItLater.BL;
+using ReadItLater.Web.Client.Pages;
 using ReadItLater.Web.Client.Services;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,13 @@ namespace ReadItLater.Web.Client
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             //builder.Services.AddSingleton<IHtmlParser, HtmlParser>();
-            builder.Services.AddSingleton(typeof(AppState));
+            builder.Services.AddSingleton(typeof(Context));
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+
+            //var c1 = host.Services.GetRequiredService<Menu>();
+
+            await host.RunAsync();
         }
     }
 }

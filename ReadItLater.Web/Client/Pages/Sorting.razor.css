@@ -1,0 +1,26 @@
+﻿.sub-menu {
+  background-color: #fff;
+  border-right: 1px solid #E4E4E4;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+  width: 16%;
+  justify-content: normal;
+}
+
+select {
+  width: 45%;
+  border: none;
+  border-bottom: 1px solid;
+  font-size: 1.2em;
+  margin: 0 2% 0 0;
+}
+
+.one-line {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.already-selected {
+  margin-top: 2em;
+}

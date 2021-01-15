@@ -4,10 +4,10 @@ namespace ReadItLater.Web.Client.Services
 {
     public abstract class State
     {
-        protected AppState context;
+        protected Context context;
         public StateType Type { get; protected set; }
 
-        public void SetContext(AppState appState)
+        public void SetContext(Context appState)
         {
             context = appState;
         }

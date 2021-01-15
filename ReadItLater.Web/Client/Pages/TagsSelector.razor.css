@@ -1,0 +1,82 @@
+﻿.sub-menu {
+  background-color: #fff;
+  border-right: 1px solid #E4E4E4;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+  width: 16%;
+  justify-content: normal;
+}
+
+span {
+  font-size: 0.9em;
+}
+
+.cf-items {
+  font-size: 1.3em;
+  margin: 0.5em 0;
+}
+
+  .cf-items span.fi-counter {
+    font-size: 0.7em;
+  }
+
+.cf-all {
+  padding: 0.2em 0 0.2em 0.2em;
+  margin-bottom: 3em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cf-list {
+  padding: 0;
+}
+
+  .cf-list .item {
+    /*margin: 0.5em 0;*/
+    padding: 0.2em 0 0.2em 0.2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+.fi-counter {
+  color: #a9a9a9;
+}
+
+.selected {
+  position: relative;
+  background: #F0F0F0;
+}
+
+  .selected:after, .selected:before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 50%;
+    left: 100%;
+  }
+
+  .selected:after {
+    bottom: 0;
+    background: linear-gradient(to right bottom, #F0F0F0 50%, transparent 50%);
+  }
+
+  .selected:before {
+    top: 0;
+    background: linear-gradient(to right top, #F0F0F0 50%, transparent 50%);
+  }
+
+.sorting {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.2em;
+}
+
+  .sorting i {
+    color: #c7c7c7;
+    font-size: 0.8em;
+  }
