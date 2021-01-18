@@ -1,5 +1,4 @@
-﻿@using ReadItLater.Data
-@using ReadItLater.Web.Client.Services
+﻿@using ReadItLater.Web.Client.Services
 
 @if (Context.Type == StateType.Add || Context.Type == StateType.Edit)
 {
@@ -22,7 +21,6 @@
         @if (!model?.IsDefault ?? false)
         {
             <div class="info-block">
-                <p>@model.Id</p>
                 <img src="@model.Image" style="width:100%" />
                 <textarea rows="4" @bind="model.Title">@model.Title</textarea>
                 <div class="one-line">

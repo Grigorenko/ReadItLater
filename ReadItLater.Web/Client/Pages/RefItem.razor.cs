@@ -11,42 +11,16 @@ namespace ReadItLater.Web.Client.Pages
         public Ref Item { get; set; }
 
         [Inject]
-        public Context AppState { get; set; }
-
-        //private bool isLoading;
-
-        //protected override void OnInitialized()
-        //{
-        //    Console.WriteLine($"{nameof(RefItem)}.{nameof(OnInitialized)}");
-
-        //    isLoading = false;
-
-        //    AppState.WriteStatusLog();
-        //}
+        public Context Context { get; set; }
 
         private void ChooseTag(Guid tagId)
         {
-            var logMsg = $"{nameof(RefItem)}.{nameof(ChooseTag)}(tagId:{tagId})";
-            Console.WriteLine(logMsg);
-
-            AppState.TagChosen(tagId);
-
-            AppState.WriteStatusLog(logMsg);
+            Context.TagChosen(tagId);
         }
 
         private void EditRef()
         {
-            //if (isLoading)
-            //    return;
-
-            var logMsg = $"{nameof(RefItem)}.{nameof(EditRef)}";
-            Console.WriteLine(logMsg);
-
-            //isLoading = true;
-            AppState.RefEditing(Item.Id);
-            //isLoading = false;
-
-            AppState.WriteStatusLog(logMsg);
+            Context.RefEditing(Item.Id);
         }
 
         private RenderFragment DotsIcon(int countOfDots = 3) => b =>

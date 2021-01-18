@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReadItLater.Web.Client.Services.Models;
+using System;
 
 namespace ReadItLater.Web.Client.Services
 {
@@ -31,6 +32,12 @@ namespace ReadItLater.Web.Client.Services
         {
             Console.WriteLine($"{nameof(CloseState)}.{nameof(Show)} => {nameof(ShowState)}");
             context.ChangeState(new ShowState());
+        }
+
+        public override void Sorting(Badge[] badges)
+        {
+            Console.WriteLine($"{nameof(CloseState)}.{nameof(Sorting)} => {nameof(SortingState)}");
+            context.ChangeState(new SortingState());
         }
     }
 }

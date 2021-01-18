@@ -1,74 +1,59 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Net.Mime;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace ReadItLater.Web.Client.Pages
 {
-    public partial class AddNewRef : IDisposable
+    public partial class AddNewRef : IDisposable,
+        IContext,
+        IRefEdited,
+        IStateChanged
     {
         [Inject]
-        public HttpClient Http { get; set; }
+        public RefHttpService refHttpService { get; set; }
+
+        [Inject]
+        public FolderHttpService folderHttpService { get; set; }
 
         [Inject]
         public Context Context { get; set; }
-
-        [Parameter]
-        public FolderListItemProjection[] folders { get; set; }
 
         private string url;
         private RefProjection model;
         private string tag;
         private bool isLoading;
+        private FolderListItemProjection[] folders;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(OnInitialized)}";
-            Console.WriteLine(logMsg);
-
             isLoading = false;
             model = new RefProjection();
-            Context.RefEdited += async id => await RefEditedEventHandler(id);
-            Context.StateChanged += () => StateChangedEventHandler();
-
-            Context.WriteStatusLog(logMsg);
+            Context.Subscribe(this);
+            folders = await folderHttpService.GetListAsync();
         }
 
-        public async Task RefEditedEventHandler(Guid id)
+        async Task IRefEdited.Handle(Guid id)
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(RefEditedEventHandler)}(id:{id})";
-            Console.WriteLine(logMsg);
-
             if (Context.Type != StateType.Edit)
-                throw new Exception(logMsg);
+                throw new Exception();
 
-            var res = await Http.GetFromJsonAsync<RefProjection>($"refs/{id}");
-
-            Console.WriteLine(JsonSerializer.Serialize(res, new JsonSerializerOptions { WriteIndented = true }));
-            model = res;
+            model = await refHttpService.GetByIdAsync(id);
             model.IsDefault = false;
 
-            //Console.WriteLine(JsonSerializer.Serialize(model));
-
             StateHasChanged();
-
-
-            Context.WriteStatusLog(logMsg);
         }
 
-        private void StateChangedEventHandler()
+        async Task IStateChanged.Handle()
         {
             model = new RefProjection();
             StateHasChanged();
+
+            await Task.CompletedTask;
         }
 
         private async Task Add()
@@ -76,19 +61,14 @@ namespace ReadItLater.Web.Client.Pages
             if (isLoading)
                 return;
 
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(Add)}";
-            Console.WriteLine(logMsg);
-
             isLoading = true;
-            model = await Http.GetFromJsonAsync<RefProjection>("get-ref?url=" + HttpUtility.UrlEncode(url));
+            model = await refHttpService.GetByUrlAsync(url);
             model.IsDefault = false;
 
             if (model.Tags != null)
                 tag = string.Join(", ", model.Tags.Select(t => t.Name));
 
             isLoading = false;
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Create()
@@ -98,23 +78,13 @@ namespace ReadItLater.Web.Client.Pages
 
             //ToDo: add validation
 
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(Create)}";
-            Console.WriteLine(logMsg);
-
             isLoading = true;
             AddTag();
-            var json = JsonSerializer.Serialize(model);
-
-            using (var content = new StringContent(model.ToString(), Encoding.UTF8, MediaTypeNames.Application.Json))
-            {
-                await Http.PostAsync("refs", content);
-            }
+            await refHttpService.CreateAsync(model);
 
             isLoading = false;
 
             CloseForm(contentChanged: true);
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Update()
@@ -124,24 +94,13 @@ namespace ReadItLater.Web.Client.Pages
 
             //ToDo: add validation
 
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(Update)}";
-            Console.WriteLine(logMsg);
-
             isLoading = true;
             AddTag();
-            var json = JsonSerializer.Serialize(model);
-            Console.WriteLine(json);
-
-            using (var content = new StringContent(model.ToString(), Encoding.UTF8, MediaTypeNames.Application.Json))
-            {
-                await Http.PutAsync("refs", content);
-            }
+            await refHttpService.UpdateAsync(model);
 
             isLoading = false;
 
             CloseForm(contentChanged: true);
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private async Task Delete()
@@ -149,40 +108,27 @@ namespace ReadItLater.Web.Client.Pages
             if (isLoading)
                 return;
 
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(Delete)}";
-            Console.WriteLine(logMsg);
-
             isLoading = true;
 
-            await Http.DeleteAsync($"refs/{model.Id}");
+            await refHttpService.DeleteAsync(model.Id);
 
             isLoading = false;
 
             CloseForm(contentChanged: true);
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private void CloseForm(bool contentChanged = false)
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(CloseForm)}";
-            Console.WriteLine(logMsg);
-
             Context.Close();
 
             model = new RefProjection();
 
             if (contentChanged)
                 Context.ContentChanged();
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private void AddTag()
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(AddTag)}";
-            Console.WriteLine(logMsg);
-
             if (string.IsNullOrEmpty(tag))
             {
                 Console.WriteLine("Tag is empty.");
@@ -199,15 +145,10 @@ namespace ReadItLater.Web.Client.Pages
                 Console.WriteLine("Tag with the same name already added.");
 
             tag = string.Empty;
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private void DeleteTag(string name)
         {
-            var logMsg = $"{nameof(AddNewRef)}.{nameof(DeleteTag)}(name: {name})";
-            Console.WriteLine(logMsg);
-
             if (string.IsNullOrEmpty(name))
                 return;
 
@@ -216,8 +157,6 @@ namespace ReadItLater.Web.Client.Pages
 
             if (model.Tags.Any(x => x.Name.Equals(name)))
                 model.Tags = model.Tags.Where(t => !t.Name.Equals(name)).ToList();
-
-            Context.WriteStatusLog(logMsg);
         }
 
         private RenderFragment Loading() => b =>
@@ -231,8 +170,7 @@ namespace ReadItLater.Web.Client.Pages
 
         public void Dispose()
         {
-            Context.RefEdited -= async id => await RefEditedEventHandler(id);
-            Context.StateChanged -= () => StateChangedEventHandler();
+            Context.Unsubscribe(this);
         }
     }
 }

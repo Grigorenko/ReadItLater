@@ -9,11 +9,19 @@
 }
 
 select {
-  width: 45%;
+  width: 50%;
   border: none;
   border-bottom: 1px solid;
   font-size: 1.2em;
   margin: 0 2% 0 0;
+}
+
+button {
+  background-color: #ececec;
+  border: none;
+  font-size: 1em;
+  margin: 1em 0 0;
+  line-height: 2em;
 }
 
 .one-line {
@@ -24,3 +32,23 @@ select {
 .already-selected {
   margin-top: 2em;
 }
+
+.selected-badge {
+  display: flex;
+  margin-top: 0.5em;
+}
+
+.arrows {
+  display: flex;
+  flex-direction: column;
+}
+
+  .arrows i {
+    font-size: 0.8em;
+    color: #cac8c8;
+  }
+
+  .arrows i.active {
+    color: #000;
+    cursor: pointer;
+  }

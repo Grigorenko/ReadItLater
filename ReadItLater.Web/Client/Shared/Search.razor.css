@@ -10,10 +10,12 @@
     border: none;
     line-height: 1.1em;
     font-size: 1.1em;
+    width: 100%;
   }
 
   .search i {
     font-size: 1.1em;
     padding-left: 0.2em;
-    color: #c7c7c7
+    color: #c7c7c7;
+    cursor: pointer;
   }

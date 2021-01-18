@@ -1,107 +1,85 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Http;
+using ReadItLater.Web.Client.Services.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Pages
 {
-    public partial class Content : IDisposable
+    public partial class Content : IDisposable, 
+        IContext,
+        IFolderChanged,
+        ITagChanged,
+        IDataChanged,
+        ISortingChanged
     {
         [Inject]
-        public HttpClient Http { get; set; }
+        public RefHttpService httpService { get; set; }
 
         [Inject]
-        public Context AppState { get; set; }
+        public Context Context { get; set; }
 
         private Ref[] refs;
+        private Badge[] badges;
 
         protected override async Task OnInitializedAsync()
         {
-            var logMsg = $"{nameof(Content)}.{nameof(OnInitializedAsync)}";
-            Console.WriteLine(logMsg);
-
             await UpdateRefs(null, null, false);
 
-            AppState.DataChanged += async (folderId, tagId) => await DataChangedEventHandler(folderId, tagId);
-            AppState.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
-            AppState.TagChanged += async (folderId, tagId) => await TagChangedEventHandler(folderId, tagId);
-
-            AppState.WriteStatusLog(logMsg);
+            Context.Subscribe(this);
         }
 
-        private async Task DataChangedEventHandler(Guid? folderId, Guid? tagId)
+        async Task IDataChanged.Handle(Guid? folderId, Guid? tagId)
         {
-            var logMsg = $"{nameof(Content)}.{nameof(DataChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
-            Console.WriteLine(logMsg);
-
             await UpdateRefs(folderId, tagId);
-
-            AppState.WriteStatusLog(logMsg);
         }
 
-        private async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
+        async Task IFolderChanged.Handle(Guid folderId, Guid? tagId)
         {
-            var logMsg = $"{nameof(Content)}.{nameof(FolderChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
-            Console.WriteLine(logMsg);
-
             await UpdateRefs(folderId, tagId);
-
-            AppState.WriteStatusLog(logMsg);
         }
 
-        private async Task TagChangedEventHandler(Guid folderId, Guid? tagId)
+        async Task ITagChanged.Handle(Guid folderId, Guid? tagId)
         {
-            var logMsg = $"{nameof(Content)}.{nameof(TagChangedEventHandler)}(folderId:{folderId}, tagId:{tagId})";
-            Console.WriteLine(logMsg);
-
             await UpdateRefs(folderId, tagId);
+        }
 
-            AppState.WriteStatusLog(logMsg);
+        async Task ISortingChanged.Handle(Badge[] badges)
+        {
+            this.badges = badges;
+
+            StateHasChanged();
+
+            await Task.CompletedTask;
+        }
+
+        private void DeleteBadgeCallbackHandler(string key)
+        {
+            var badge = new Badges(badges);
+            badge.Remove(key);
+
+            Context.ApplySorting(badge.Items.ToArray());
+        }
+
+        private void ChooseSorting()
+        {
+            Context.ChooseSorting(badges);
         }
 
         private async Task UpdateRefs(Guid? folderId, Guid? tagId, bool stateHasChanged = true)
         {
-            //ToDo: virtualize?
-        //https://docs.microsoft.com/ru-ru/aspnet/core/blazor/webassembly-performance-best-practices?view=aspnetcore-5.0#virtualization
-            var url = BuildUrl(folderId, tagId);
-            //Console.WriteLine(url);
-            refs = await Http.GetFromJsonAsync<Ref[]>(url);
+            refs = await httpService.GetAsync(folderId, tagId);
 
             if (stateHasChanged)
                 StateHasChanged();
         }
 
-        private string BuildUrl(Guid? folderId, Guid? tagId, int offset = 0, int limit = 25, string orderBy = "", string direction = "")
-        {
-            var parameters = new Dictionary<string, string>
-            {
-                ["folderId"] = folderId?.ToString(),
-                ["tagId"] = tagId?.ToString(),
-                [nameof(offset)] = offset.ToString(),
-                [nameof(limit)] = limit.ToString(),
-                [nameof(orderBy)] = orderBy,
-                [nameof(direction)] = direction
-            };
-
-            var builder = new UriBuilder("","")
-            {
-                Path = "refs",
-                Query = string.Join("&", parameters.Select(p => $"{p.Key}={p.Value}"))
-            };
-
-            return builder.ToString().TrimStart('/');
-        }
-
         public void Dispose()
         {
-            AppState.DataChanged -= async (folderId, tagId) => await DataChangedEventHandler(folderId, tagId);
-            AppState.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
-            AppState.TagChanged -= async (folderId, tagId) => await TagChangedEventHandler(folderId, tagId);
+            Context.Unsubscribe(this);
         }
     }
 }

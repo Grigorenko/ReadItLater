@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using ReadItLater.BL;
-using ReadItLater.Web.Client.Pages;
 using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Http;
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client
@@ -20,15 +14,18 @@ namespace ReadItLater.Web.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            //builder.Services.AddSingleton<IHtmlParser, HtmlParser>();
-            builder.Services.AddSingleton(typeof(Context));
-
+            ConfigureServices(builder.Services, builder.HostEnvironment);
+            
             var host = builder.Build();
 
-            //var c1 = host.Services.GetRequiredService<Menu>();
-
             await host.RunAsync();
+        }
+
+        private static void ConfigureServices(IServiceCollection services, IWebAssemblyHostEnvironment env)
+        {
+            services.AddSingleton(typeof(Context));
+            services.AddHttpClient<RefHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
+            services.AddHttpClient<FolderHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
         }
     }
 }

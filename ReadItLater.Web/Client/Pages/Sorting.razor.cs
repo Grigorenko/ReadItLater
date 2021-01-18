@@ -1,15 +1,24 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Pages
 {
-    public partial class Sorting
+    public partial class Sorting : IDisposable,
+        IContext,
+        ISortingChosen,
+        IStateChanged
     {
+        [Inject]
+        public Context Context { get; set; }
+
         private string orderBy;
         private string direction;
-        private IDictionary<string, string> selected;
+        private Badges badges;
 
         private IEnumerable<string> orderingItemNames = new[]
         {
@@ -21,36 +30,62 @@ namespace ReadItLater.Web.Client.Pages
         {
             orderBy = orderingItemNames.First();
             direction = Direction.Ascending.ToString();
-            selected = new Dictionary<string, string>();
+            badges = new Badges();
+
+            Context.Subscribe(this);
         }
 
-        public void DeleteBadgeCallbackHandler(string key)
+        async Task ISortingChosen.Handle(Badge[] badges)
         {
-            if (!selected.ContainsKey(key))
-                throw new ArgumentException(nameof(key));
+            StateHasChanged();
 
-            selected.Remove(key);
+            await Task.CompletedTask;
+        }
+        async Task IStateChanged.Handle()
+        {
+            StateHasChanged();
+
+            await Task.CompletedTask;
         }
 
-        public void AddBadge()
+        private void DeleteBadgeCallbackHandler(string key)
+        {
+            badges.Remove(key);
+
+            orderBy = orderingItemNames.FirstOrDefault(i => !badges.Keys.Any(k => string.Equals(k, i)));
+        }
+
+        private void AddBadge()
         {
             if (string.IsNullOrEmpty(orderBy) || string.IsNullOrEmpty(direction))
                 return;
 
             //ToDo: add validation above
 
-            if (selected.ContainsKey(orderBy))
-                throw new ArgumentException(nameof(orderBy));
+            badges.Add(orderBy, direction);
 
-            selected.Add(orderBy, direction);
-
-            orderBy = null;
+            orderBy = orderingItemNames.FirstOrDefault(i => !badges.Keys.Any(k => string.Equals(k, i)));
         }
-    }
 
-    public enum Direction
-    {
-        Ascending,
-        Descending
+        private void MoveUp(string key)
+        {
+            badges.MoveUp(key);
+        }
+
+        private void MoveDown(string key)
+        {
+            badges.MoveDown(key);
+        }
+
+        private void ApplySorting()
+        {
+            Context.ApplySorting(badges.Items.ToArray());
+            Context.Close();
+        }
+
+        public void Dispose()
+        {
+            Context.Unsubscribe(this);
+        }
     }
 }

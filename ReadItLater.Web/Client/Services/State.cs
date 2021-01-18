@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReadItLater.Web.Client.Services.Models;
+using System;
 
 namespace ReadItLater.Web.Client.Services
 {
@@ -14,6 +15,7 @@ namespace ReadItLater.Web.Client.Services
 
         public abstract void AddNew();
         public abstract void Edit(Guid refId);
+        public abstract void Sorting(Badge[] badges);
         public abstract void Show(Guid? folderId = null, Guid? tagId = null);
         public abstract void Close();
     }

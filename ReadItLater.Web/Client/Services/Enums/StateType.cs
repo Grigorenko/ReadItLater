@@ -6,6 +6,6 @@
         Close,
         Add,
         Edit,
-        //Manipulate = Add | Edit
+        Sorting
     }
 }

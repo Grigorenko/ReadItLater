@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Shared
 {
-    public partial class Breadcrumbs : IDisposable
+    public partial class Breadcrumbs
     {
         [Inject]
         public HttpClient Http { get; set; }
@@ -20,17 +20,6 @@ namespace ReadItLater.Web.Client.Shared
         public Guid? FolderId { get; set; }
 
         private BreadcrumbProjection[] breadcrumbs;
-
-        //protected override async Task OnInitializedAsync()
-        protected override void OnInitialized()
-        {
-            var logMsg = $"{nameof(Breadcrumbs)}.{nameof(OnInitialized)}";
-            Console.WriteLine(logMsg);
-
-            //Context.FolderChanged += async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
-
-            Context.WriteStatusLog(logMsg);
-        }
 
         public async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
         {
@@ -52,11 +41,6 @@ namespace ReadItLater.Web.Client.Shared
             Context.FolderChosen(id);
 
             Context.WriteStatusLog(logMsg);
-        }
-
-        public void Dispose()
-        {
-            //Context.FolderChanged -= async (folderId, tagId) => await FolderChangedEventHandler(folderId, tagId);
         }
     }
 }

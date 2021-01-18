@@ -1,32 +1,59 @@
-﻿
-<div class="sub-menu">
-    <div class="one-line">
-        <select @bind="orderBy" class="sorting-items">
-            @foreach (var item in orderingItemNames)
-            {
-                if (selected.ContainsKey(item))
-                {
-                    <option disabled value="@item">@item</option>
-                }
-                else
-                {
-                    <option value="@item">@item</option>
-                }
-            }
-        </select>
-        <select @bind="direction" class="sorting-items">
-            @foreach (var item in (Direction[])Enum.GetValues(typeof(Direction)))
-            {
-                <option value="@item.ToString()">@item.ToString()</option>
-            }
-        </select>
-        <i class="fa fa-plus" @onclick="AddBadge"></i>
-    </div>
+﻿@using Services;
 
-    <div class="already-selected">
-        @foreach (var item in selected)
-        {
-            <SortingBadge Key="@item.Key" Value="@item.Value" DeleteBadgeCallback="DeleteBadgeCallbackHandler" />
-        }
+@if (Context.Type == Services.StateType.Sorting)
+{
+    <div class="sub-menu">
+        <p>Choose sorting:</p>
+        <div class="one-line">
+            <select @bind="orderBy" class="sorting-items">
+                @foreach (var item in orderingItemNames)
+                {
+                    if (badges.ContainsKey(item))
+                    {
+                        <option disabled value="@item">@item</option>
+                    }
+                    else
+                    {
+                        <option value="@item">@item</option>
+                    }
+                }
+            </select>
+            <select @bind="direction" class="sorting-items">
+                @foreach (var item in (Direction[])Enum.GetValues(typeof(Direction)))
+                {
+                    <option value="@item.ToString()">@item.ToString()</option>
+                }
+            </select>
+            <i class="fa fa-plus" @onclick="AddBadge"></i>
+        </div>
+
+        <div class="already-selected">
+            @foreach (var item in badges.Items)
+            {
+                <div class="selected-badge">
+                    <div class="arrows">
+                        @if (item.IsArrowUpActive)
+                        {
+                            <i class="fa fa-caret-up active" @onclick="(e => MoveUp(item.Key))"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-caret-up"></i>
+                        }
+                        @if (item.IsArrowDownActive)
+                        {
+                            <i class="fa fa-caret-down active" @onclick="(e => MoveDown(item.Key))"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-caret-down"></i>
+                        }
+                    </div>
+                    <SortingBadge Key="@item.Key" Value="@item.Value" DeleteBadgeCallback="DeleteBadgeCallbackHandler" />
+                </div>
+            }
+        </div>
+
+            <button class="apply" @onclick="ApplySorting">Apply</button>
     </div>
-</div>
+}

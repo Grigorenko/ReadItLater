@@ -2,51 +2,39 @@
 using System;
 using System.Threading.Tasks;
 using ReadItLater.Data;
-using System.Net.Http;
-using System.Net.Http.Json;
 using ReadItLater.Web.Client.Services;
 using System.Linq;
-using Microsoft.AspNetCore.Components.Web;
+using ReadItLater.Web.Client.Services.Http;
 
 namespace ReadItLater.Web.Client.Pages
 {
-    public partial class Menu : IDisposable
+    public partial class Menu : IDisposable,
+        IContext,
+        IDataChanged
     {
         [Inject]
-        public HttpClient Http { get; set; }
+        public FolderHttpService httpService { get; set; }
 
         [Inject]
-        public Context AppState { get; set; }
+        public Context Context { get; set; }
 
         private FolderListItemProjection[] folders;
         private int refsAllCount;
 
         protected override async Task OnInitializedAsync()
         {
-            var logMsg = $"{nameof(Menu)}.{nameof(OnInitializedAsync)}";
-            Console.WriteLine(logMsg);
-
-            folders = await Http.GetFromJsonAsync<FolderListItemProjection[]>("Folders/list");
-            //AppState.DataChanged += async () => await UpdateFolders();
-
-            AppState.WriteStatusLog(logMsg);
+            folders = await httpService.GetListAsync();
+            Context.Subscribe(this);
         }
 
-        //private async Task UpdateFolders()
-        //{
-        //    Console.WriteLine($"{nameof(Menu)}.{nameof(UpdateFolders)}");
-
-        //    folders = await Http.GetFromJsonAsync<FolderListItemProjection[]>("Folders/list");
-        //    StateHasChanged();
-
-        //    AppState.WriteStatusLog();
-        //}
+        async Task IDataChanged.Handle(Guid? folderId, Guid? tagId)
+        {
+            folders = await httpService.GetListAsync();
+            StateHasChanged();
+        }
 
         public void FolderChosen(Guid folderId)
         {
-            var logMsg = $"{nameof(Menu)}.{nameof(FolderChosen)}(folderId:{folderId})";
-            Console.WriteLine(logMsg);
-
             refsAllCount = folders.Concat(folders.SelectMany(f => f.Folders)).Single(f => f.Id == folderId).RefsCount;
 
             if (refsAllCount == 0)
@@ -55,26 +43,17 @@ namespace ReadItLater.Web.Client.Pages
                 return;
             }
 
-            //AppState.EndRefAdding();
-            AppState.FolderChosen(folderId);
-
-            AppState.WriteStatusLog(logMsg);
+            Context.FolderChosen(folderId);
         }
 
         private void AddNew()
         {
-            var logMsg = $"{nameof(Menu)}.{nameof(AddNew)}";
-            Console.WriteLine(logMsg);
-
-            //AppState.StartRefAdding();
-            AppState.RefAdding();
-
-            AppState.WriteStatusLog(logMsg);
+            Context.RefAdding();
         }
 
         public void Dispose()
         {
-            //AppState.DataChanged -= async () => await UpdateFolders();
+            Context.Unsubscribe(this);
         }
     }
 }
