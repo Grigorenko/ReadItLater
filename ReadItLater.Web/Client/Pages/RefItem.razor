@@ -9,7 +9,7 @@
             </div>
             <i class="fa fa-sliders" @onclick="EditRef"></i>
         </div>
-        <p class="item-title"><a href="@Item.Url" target="_blank">@Item.Title</a></p>
+        <p class="item-title"><a href="@Item.Url" target="_blank" @onclick="RefView">@Item.Title</a></p>
         <div class="item-tags">
             @if (Item.Tags != null)
             {

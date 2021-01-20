@@ -27,7 +27,7 @@ namespace ReadItLater.Web.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await UpdateRefs(null, null, false);
+            await UpdateRefs(null, null, stateHasChanged: false);
 
             Context.Subscribe(this);
         }
@@ -47,13 +47,18 @@ namespace ReadItLater.Web.Client.Pages
             await UpdateRefs(folderId, tagId);
         }
 
-        async Task ISortingChanged.Handle(Badge[] badges)
+        async Task ISortingChanged.Handle(Guid? folderId, Guid? tagId, Badge[] badges)
         {
             this.badges = badges;
 
             StateHasChanged();
 
-            await Task.CompletedTask;
+            await UpdateRefs(folderId, tagId, sort: GetSortParameterString());
+        }
+
+        private async Task Seach(string term)
+        {
+            refs = await httpService.SearchAsync(null, null, term, sort: GetSortParameterString());
         }
 
         private void DeleteBadgeCallbackHandler(string key)
@@ -69,13 +74,24 @@ namespace ReadItLater.Web.Client.Pages
             Context.ChooseSorting(badges);
         }
 
-        private async Task UpdateRefs(Guid? folderId, Guid? tagId, bool stateHasChanged = true)
+        private async Task UpdateRefs(Guid? folderId, Guid? tagId, int offset = 0, int limit = 50, string sort = "", bool stateHasChanged = true)
         {
-            refs = await httpService.GetAsync(folderId, tagId);
+            refs = await httpService.GetAsync(folderId, tagId, offset, limit, sort);
 
             if (stateHasChanged)
                 StateHasChanged();
         }
+
+        private string GetSortParameterString() => 
+            badges is null 
+                ? string.Empty 
+                : string.Join(",",
+                    badges
+                        .OrderBy(b => b.Position)
+                        .Select(b => string.Equals(b.Value, "descending", StringComparison.OrdinalIgnoreCase)
+                            ? $"-{b.Key}"
+                            : $"+{b.Key}")
+                );
 
         public void Dispose()
         {

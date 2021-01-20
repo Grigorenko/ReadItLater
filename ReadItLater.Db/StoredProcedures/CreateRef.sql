@@ -5,8 +5,8 @@ AS
 	DECLARE @currentId UNIQUEIDENTIFIER;
 	SELECT TOP 1 @currentId = COALESCE([Id], NEWID()) FROM @ref;
 
-	INSERT INTO [Refs] ([Id], [FolderId], [Title], [Url], [Image], [Priority], [Date])
-	SELECT TOP 1 @currentId, [FolderId], [Title], [Url], [Image], [Priority], [Date] FROM @ref;
+	INSERT INTO [Refs] ([Id], [FolderId], [Title], [Url], [Image], [Priority], [Date], [Note])
+	SELECT TOP 1 @currentId, [FolderId], [Title], [Url], [Image], [Priority], [Date], [Note] FROM @ref;
 	
 	DECLARE @defaultGuid UNIQUEIDENTIFIER = 0x0;
 

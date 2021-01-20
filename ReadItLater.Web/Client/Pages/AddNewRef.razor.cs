@@ -21,6 +21,9 @@ namespace ReadItLater.Web.Client.Pages
         public FolderHttpService folderHttpService { get; set; }
 
         [Inject]
+        public TagHttpService tagHttpService { get; set; }
+
+        [Inject]
         public Context Context { get; set; }
 
         private string url;
@@ -28,6 +31,7 @@ namespace ReadItLater.Web.Client.Pages
         private string tag;
         private bool isLoading;
         private FolderListItemProjection[] folders;
+        private TagProjection[] autofilledTags;
 
         protected override async Task OnInitializedAsync()
         {
@@ -127,9 +131,9 @@ namespace ReadItLater.Web.Client.Pages
                 Context.ContentChanged();
         }
 
-        private void AddTag()
+        private void AddTagByName(string name)
         {
-            if (string.IsNullOrEmpty(tag))
+            if (string.IsNullOrEmpty(name))
             {
                 Console.WriteLine("Tag is empty.");
                 return;
@@ -138,11 +142,18 @@ namespace ReadItLater.Web.Client.Pages
             if (model.Tags is null)
                 model.Tags = new List<Tag>();
 
-            if (!model.Tags.Any(x => x.Name.Equals(tag)))
-                model.Tags.Add(new Tag { Name = tag });
+            if (!model.Tags.Any(x => x.Name.Equals(name)))
+                model.Tags.Add(new Tag { Name = name });
 
             else
                 Console.WriteLine("Tag with the same name already added.");
+
+            UpdateAutoFilledTags(autofilledTags);
+        }
+
+        private void AddTag()
+        {
+            AddTagByName(tag);
 
             tag = string.Empty;
         }
@@ -157,6 +168,37 @@ namespace ReadItLater.Web.Client.Pages
 
             if (model.Tags.Any(x => x.Name.Equals(name)))
                 model.Tags = model.Tags.Where(t => !t.Name.Equals(name)).ToList();
+        }
+
+        private async Task AutofillTags(ChangeEventArgs e)
+        {
+            this.tag = e.Value.ToString();
+
+            if (string.IsNullOrEmpty(tag) || tag.Length < 3)
+            {
+                autofilledTags = null;
+                return;
+            }
+
+            var tags = await tagHttpService.AutofillAsync(tag);
+
+            UpdateAutoFilledTags(tags);
+        }
+
+        private void UpdateAutoFilledTags(TagProjection[] tags)
+        {
+            if (model.Tags is null || !model.Tags.Any())
+                autofilledTags = tags;
+
+            else
+                autofilledTags = tags
+                    ?.Where(t => !model.Tags.Any(e => string.Equals(e.Name, t.Name, StringComparison.OrdinalIgnoreCase)))
+                    ?.ToArray();
+        }
+
+        private void UploadImage()
+        {
+            StateHasChanged();
         }
 
         private RenderFragment Loading() => b =>

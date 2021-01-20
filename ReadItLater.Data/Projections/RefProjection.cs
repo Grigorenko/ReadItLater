@@ -15,6 +15,7 @@ namespace ReadItLater.Data
         public string Image { get; set; }
         public Priority Priority { get; set; }
         public DateTime Date { get; private set; } = DateTime.UtcNow;
+        public string Note { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
 

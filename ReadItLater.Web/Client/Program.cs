@@ -26,6 +26,7 @@ namespace ReadItLater.Web.Client
             services.AddSingleton(typeof(Context));
             services.AddHttpClient<RefHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
             services.AddHttpClient<FolderHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
+            services.AddHttpClient<TagHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
         }
     }
 }

@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Http;
 using System;
+using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Pages
 {
     public partial class RefItem
     {
+        [Inject]
+        public RefHttpService httpService { get; set; }
+
         [Parameter]
         public Ref Item { get; set; }
 
@@ -21,6 +26,11 @@ namespace ReadItLater.Web.Client.Pages
         private void EditRef()
         {
             Context.RefEditing(Item.Id);
+        }
+
+        private async Task RefView()
+        {
+            await httpService.UpdateCountOfView(Item.Id);
         }
 
         private RenderFragment DotsIcon(int countOfDots = 3) => b =>

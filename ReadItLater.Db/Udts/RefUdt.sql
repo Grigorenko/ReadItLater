@@ -7,5 +7,6 @@ AS TABLE
 	[Url] NVARCHAR(500) NOT NULL, 
 	[Image] NVARCHAR(500), 
 	[Priority] INT, 
-	[Date] DATETIME
+	[Date] DATETIME,
+	[Note] NVARCHAR(2000)
 )

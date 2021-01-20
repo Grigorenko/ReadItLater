@@ -23,9 +23,9 @@ AS
 	ON T.[Name] = S.[Name]
 	WHEN NOT MATCHED BY TARGET THEN
 		INSERT ([Id], [Name]) 
-		VALUES (CASE WHEN S.[Id] = @defaultGuid OR S.[Id] IS NULL THEN NEWID() ELSE S.[Id] END, S.[Name])
-	WHEN NOT MATCHED BY SOURCE AND (SELECT COUNT(1) FROM [TagRefs] WHERE [RefId] <> @currentId AND [TagId] = T.[Id]) = 0 THEN
-		DELETE;
+		VALUES (CASE WHEN S.[Id] = @defaultGuid OR S.[Id] IS NULL THEN NEWID() ELSE S.[Id] END, S.[Name]);
+	--WHEN NOT MATCHED BY SOURCE AND (SELECT COUNT(1) FROM [TagRefs] WHERE [RefId] <> @currentId AND [TagId] = T.[Id]) = 0 THEN
+	--	DELETE;
 
 	MERGE INTO [TagRefs] AS T
 	USING @tags AS S

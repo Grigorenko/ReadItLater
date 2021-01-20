@@ -60,6 +60,7 @@
     <Folder Include="Udts" />
     <Folder Include="Tables" />
     <Folder Include="Scripts" />
+    <Folder Include="Functions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="StoredProcedures\SelectFolderListItems.sql" />
@@ -73,6 +74,13 @@
     <Build Include="Tables\Tags.sql" />
     <Build Include="StoredProcedures\GetBreadcrumbs.sql" />
     <Build Include="StoredProcedures\SelectRefs.sql" />
+    <Build Include="StoredProcedures\DeleteRef.sql" />
+    <Build Include="StoredProcedures\SelectRefById.sql" />
+    <Build Include="StoredProcedures\UpdateRef.sql" />
+    <Build Include="StoredProcedures\UpdateCountOfView.sql" />
+    <Build Include="StoredProcedures\SelectTagsByName.sql" />
+    <Build Include="Functions\GetOrderingOperationQuery.sql" />
+    <Build Include="Udts\SortUdt.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />

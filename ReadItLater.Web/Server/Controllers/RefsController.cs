@@ -29,7 +29,7 @@ namespace ReadItLater.Web.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Ref>> Get(Guid? folderId, Guid? tagId, int offset, int limit, string orderBy, string direction, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Ref>> Get(Guid? folderId, Guid? tagId, int offset, int limit, string sort, CancellationToken cancellationToken)
         {
             return await ExecStoredProcedureWithMapping(
                 "SelectRefs",
@@ -39,8 +39,24 @@ namespace ReadItLater.Web.Server.Controllers
                     tagId,
                     offset,
                     limit,
-                    orderBy,
-                    direction
+                    sort = sort.ToSortUdt()
+                },
+                cancellationToken);
+        }
+
+        [HttpGet("search")]
+        public async Task<IEnumerable<Ref>> Search(Guid? folderId, Guid? tagId, string searchTerm, int offset, int limit, string sort, CancellationToken cancellationToken)
+        {
+            return await ExecStoredProcedureWithMapping(
+                "SearchRefs",
+                new
+                {
+                    folderId,
+                    tagId,
+                    searchTerm,
+                    offset,
+                    limit,
+                    sort = sort.ToSortUdt()
                 },
                 cancellationToken);
         }
@@ -57,8 +73,14 @@ namespace ReadItLater.Web.Server.Controllers
             await dapperContext.ExecuteProcedureAsync("UpdateRef", new { @ref = @ref.ToUdt(), tags = @ref.Tags.ToUdt() }, cancellationToken);
         }
 
+        [HttpPatch("{refId:guid}")]
+        public async Task UpdateCountOfView([FromRoute] Guid refId, CancellationToken cancellationToken)
+        {
+            await dapperContext.ExecuteProcedureAsync("UpdateCountOfView", new { refId }, cancellationToken);
+        }
+
         [HttpDelete("{id:guid}")]
-        public async Task Delete([FromRoute]Guid id, CancellationToken cancellationToken)
+        public async Task Delete([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await dapperContext.ExecuteProcedureAsync("DeleteRef", new { id }, cancellationToken);
         }

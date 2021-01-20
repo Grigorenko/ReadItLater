@@ -94,4 +94,5 @@ textarea {
   .badge i {
     margin: 0;
     margin-left: 3%;
+    cursor: pointer;
   }

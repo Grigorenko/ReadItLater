@@ -133,7 +133,7 @@ namespace ReadItLater.Web.Client.Services
         public void ApplySorting(Badge[] badges)
         {
             state.Close();
-            sortingChangedEventHandlers.ForEach(x => x.Handle(badges));
+            sortingChangedEventHandlers.ForEach(x => x.Handle(folderId, tagId, badges));
         }
 
         public void ChooseSorting(Badge[] badges)
@@ -152,8 +152,6 @@ namespace ReadItLater.Web.Client.Services
                 .Append(" }")
                 .ToString();
         }
-
-        public void WriteStatusLog(string prefix) => Console.WriteLine(prefix + ": " + ToString());
 
         internal void ChangeState(State state)
         {

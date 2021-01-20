@@ -14,6 +14,7 @@ namespace ReadItLater.Data
         //public string Content { get; set; }
         public Priority Priority { get; set; }
         public DateTime Date { get; set; }
+        public string Note { get; set; }
 
         public Folder Folder { get; set; }
         public IEnumerable<TagRef> TagRels { get; set; }

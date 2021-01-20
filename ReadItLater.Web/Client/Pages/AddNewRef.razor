@@ -22,6 +22,11 @@
         {
             <div class="info-block">
                 <img src="@model.Image" style="width:100%" />
+                @if (string.IsNullOrEmpty(model.Image))
+                {
+                    <input type="text" @bind="model.Image" />
+                    <i class="fa fa-plus" @onclick="UploadImage"></i>
+                }
                 <textarea rows="4" @bind="model.Title">@model.Title</textarea>
                 <div class="one-line">
                     <select @bind="model.FolderId" class="folder-select">
@@ -47,9 +52,21 @@
                 </div>
                 <div class="tag-section">
                     <div class="one-line">
-                        <input type="text" @bind="tag" placeholder="tag" />
+                        <input type="text" @oninput="AutofillTags" placeholder="tag" />
                         <i class="fa fa-plus" @onclick="AddTag"></i>
                     </div>
+                    @if (autofilledTags != null && autofilledTags.Any())
+                    {
+                        <div class="tag-exists" style="border-bottom: 1px solid #e4e4e4;">
+                            @foreach (var item in autofilledTags)
+                            {
+                                <div class="badge">
+                                    <p>#@item.Name</p>
+                                    <i class="fa fa-plus" @onclick="@(e => AddTagByName(item.Name))"></i>
+                                </div>
+                            }
+                        </div>
+                    }
                     <div class="tag-exists">
                         @if (model.Tags?.Any() ?? false)
                         {
@@ -63,6 +80,7 @@
                         }
                     </div>
                 </div>
+                <textarea rows="4" @bind="model.Note" placeholder="Notes">@model.Note</textarea>
                 @if (Context.Type == StateType.Edit)
                 {
                     <button @onclick="Update">Update</button>
