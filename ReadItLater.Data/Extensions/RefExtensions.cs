@@ -60,8 +60,8 @@ namespace ReadItLater.Data
                 ?.Where(i => !string.IsNullOrEmpty(i));
 
             return sets
-                ?.Select(s => s.StartsWith("-") 
-                    ? (s.TrimStart('-'), "DESCENDING", seqNum++) 
+                ?.Select(s => s.StartsWith("-")
+                    ? (s.TrimStart('-'), "DESCENDING", seqNum++)
                     : (s.TrimStart('+'), "ASCENDING", seqNum++))
                 ?.ToArray();
         }

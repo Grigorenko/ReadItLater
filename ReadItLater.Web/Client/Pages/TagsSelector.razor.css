@@ -31,17 +31,24 @@ span {
 }
 
 .cf-list {
+  max-height: 26.5em;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding: 0;
 }
 
-  .cf-list .item {
-    /*margin: 0.5em 0;*/
-    padding: 0.2em 0 0.2em 0.2em;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-  }
+.huge-list {
+  padding-right: 0.3em;
+}
+
+.cf-list .item {
+  /*margin: 0.5em 0;*/
+  padding: 0.2em 0 0.2em 0.2em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
 
 .fi-counter {
   color: #a9a9a9;
@@ -79,4 +86,13 @@ span {
   .sorting i {
     color: #c7c7c7;
     font-size: 0.8em;
+    cursor: pointer;
   }
+
+    .sorting i.active {
+      color: #000;
+    }
+
+    .sorting i.inactive {
+      display: none;
+    }

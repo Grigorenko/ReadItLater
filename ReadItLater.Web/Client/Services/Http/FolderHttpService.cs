@@ -2,6 +2,8 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Services.Http
@@ -23,6 +25,39 @@ namespace ReadItLater.Web.Client.Services.Http
         public async Task<TagListItemProjection[]> GetListOfTagsAsync(Guid folderId)
         {
             return await client.GetFromJsonAsync<TagListItemProjection[]>($"Folders/{folderId}/tags");
+        }
+
+        public async Task<BreadcrumbProjection[]> GetBreadcrumbsAsync(Guid folderId)
+        {
+            return await client.GetFromJsonAsync<BreadcrumbProjection[]>($"Folders/{folderId}/breadcrumbs");
+        }
+
+        public async Task CreateAsync(FolderProjection projection)
+        {
+            using (var content = new StringContent(projection.ToString(), Encoding.UTF8, MediaTypeNames.Application.Json))
+            {
+                await client.PostAsync("Folders", content);
+            }
+        }
+
+        public async Task UpdateName(Guid folderId, string name)
+        {
+            await client.PatchAsync($"Folders/{folderId}/name/{name}", null);
+        }
+
+        public async Task MoveUp(Guid folderId)
+        {
+            await client.PatchAsync($"Folders/{folderId}/moveup", null);
+        }
+
+        public async Task MoveDown(Guid folderId)
+        {
+            await client.PatchAsync($"Folders/{folderId}/movedown", null);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            await client.DeleteAsync($"Folders/{id}");
         }
     }
 }

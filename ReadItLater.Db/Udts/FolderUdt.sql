@@ -1,0 +1,8 @@
+﻿CREATE TYPE [dbo].[FolderUdt] 
+AS TABLE
+(
+	[Id] UNIQUEIDENTIFIER, 
+	[ParentId] UNIQUEIDENTIFIER,
+	[Name] NVARCHAR(200) NOT NULL,
+	[Order] INT NOT NULL
+);

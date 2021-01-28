@@ -1,0 +1,7 @@
+﻿.icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: #a9a9a9;
+  font-size: 1.1em;
+}

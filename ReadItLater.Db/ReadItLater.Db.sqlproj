@@ -81,6 +81,13 @@
     <Build Include="StoredProcedures\SelectTagsByName.sql" />
     <Build Include="Functions\GetOrderingOperationQuery.sql" />
     <Build Include="Udts\SortUdt.sql" />
+    <Build Include="StoredProcedures\CreateFolder.sql" />
+    <Build Include="Udts\FolderUdt.sql" />
+    <Build Include="StoredProcedures\RenameFolder.sql" />
+    <Build Include="StoredProcedures\MoveUpFolder.sql" />
+    <Build Include="StoredProcedures\MoveDownFolder.sql" />
+    <Build Include="StoredProcedures\DeleteFolder.sql" />
+    <Build Include="StoredProcedures\SearchRefs.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />

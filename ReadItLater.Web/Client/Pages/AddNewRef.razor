@@ -52,7 +52,7 @@
                 </div>
                 <div class="tag-section">
                     <div class="one-line">
-                        <input type="text" @oninput="AutofillTags" placeholder="tag" />
+                        <input type="text" value="@tag" @oninput="AutofillTags" placeholder="tag" />
                         <i class="fa fa-plus" @onclick="AddTag"></i>
                     </div>
                     @if (autofilledTags != null && autofilledTags.Any())

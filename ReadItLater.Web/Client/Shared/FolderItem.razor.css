@@ -1,0 +1,74 @@
+﻿.item {
+  margin: 0.5em 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+  .item span {
+    font-size: 1.5em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+    .item span.fi-counter {
+      font-size: 1em;
+      line-height: 1.5em;
+    }
+
+.nested .item {
+  padding: 0 0 0 1em;
+  margin: 0.4em 0;
+}
+
+  .nested .item span {
+    font-size: 1em;
+  }
+
+    .nested .item span.fi-counter {
+      font-size: 1em;
+      line-height: 1em;
+    }
+
+.fi-counter {
+  color: #a9a9a9;
+}
+
+.edit-tools {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #a9a9a9;
+}
+
+  .edit-tools .arrows {
+    display: flex;
+    flex-direction: column;
+  }
+
+    .edit-tools .arrows i {
+      font-size: 0.8em;
+    }
+
+  .edit-tools i {
+    margin-right: 0.5em;
+    cursor: default;
+  }
+
+  .edit-tools .active:hover {
+    color: #000;
+    cursor: pointer;
+  }
+
+.edit-one {
+  background-color: #F0F0F0;
+  border-color: #F0F0F0;
+  border: none;
+}
+
+.edit-root {
+  font-size: 1.5em;
+  width: 82%;
+}

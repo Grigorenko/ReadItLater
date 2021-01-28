@@ -12,37 +12,25 @@
             </p>
             @if (tags != null)
             {
-                <div class="cf-list">
-                    @if (tags.Any())
-                    {
-                        <div class="sorting">
-                            @if (true) //ToDo: implement correct condition
-                            {
-                                <i class="fa fa-sort-alpha-desc"></i>
-                            }
-                            else
-                            {
-                                <i class="fa fa-sort-alpha-asc"></i>
-                            }
-                            @if (true) //ToDo: implement correct condition
-                            {
-                                <i class="fa fa-sort-numeric-asc"></i>
-                            }
-                            else
-                            {
-                                <i class="fa fa-sort-numeric-desc"></i>
-                            }
-                        </div>
-                    }
-                    @foreach (var item in tags)
-                    {
-                        <div class="item @GetSelectedTagClassName(item.Id)"
-                             @onclick="(e => TagChosen(item.Id))">
-                            <span># @item.Name</span>
-                            <span class="fi-counter">@item.RefsCount</span>
-                        </div>
-                    }
-                </div>
+                @if (tags.Any())
+                {
+                    <div class="sorting @(tags.Length > 18 ? "huge-list" : "")">
+                        <i class="fa fa-sort-alpha-asc @sortItems.SortByNameAscClassName" @onclick="sortItems.SortByNameDesc"></i>
+                        <i class="fa fa-sort-alpha-desc @sortItems.SortByNameDescClassName" @onclick="sortItems.SortByNameAsc"></i>
+                        <i class="fa fa-sort-numeric-asc @sortItems.SortByCountAscClassName" @onclick="sortItems.SortByCountDesc"></i>
+                        <i class="fa fa-sort-numeric-desc @sortItems.SortByCountDescClassName" @onclick="sortItems.SortByCountAsc"></i>
+                    </div>
+                    <div class="cf-list @(tags.Length > 18 ? "huge-list" : "")">
+                        @foreach (var item in tags)
+                        {
+                            <div class="item @GetSelectedTagClassName(item.Id)"
+                                 @onclick="(e => TagChosen(item.Id))">
+                                <span># @item.Name</span>
+                                <span class="fi-counter">@item.RefsCount</span>
+                            </div>
+                        }
+                    </div>
+                }
             }
         </div>
     </div>

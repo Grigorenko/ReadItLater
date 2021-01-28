@@ -1,0 +1,48 @@
+﻿<div class="@(IsNested ? "nested" : "")">
+    <div class="item" @onclick="FolderChosen">
+        @if (editMode)
+        {
+            <input type="text" class="edit-one @(IsNested ? "" : "edit-root")" @bind="value" />
+        }
+        else
+        {
+            <span>@Folder.Name</span>
+        }
+        @if (!IsFolderEditing)
+        {
+            <span class="fi-counter">@count</span>
+        }
+        else
+        {
+            <div class="edit-tools">
+                @if (editMode)
+                {
+                    <i class="fa fa-check active" @onclick="FolderEdited"></i>
+                }
+                else
+                {
+                    <div class="arrows">
+                        @if (Folder.IsArrowUpActive)
+                        {
+                            <i class="fa fa-caret-up active" @onclick="FolderMoveUp"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-caret-up"></i>
+                        }
+                        @if (Folder.IsArrowDownActive)
+                        {
+                            <i class="fa fa-caret-down active" @onclick="FolderMoveDown"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-caret-down"></i>
+                        }
+                    </div>
+                    <i class="fa fa-pencil active" @onclick="Edit"></i>
+                    <i class="fa fa-trash-o active" @onclick="FolderDelete"></i>
+                }
+            </div>
+        }
+    </div>
+</div>

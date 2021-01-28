@@ -1,0 +1,34 @@
+﻿@if (folders != null)
+{
+    <div class="folders">
+        <div class="root-folders">
+            @foreach (var item in folders)
+            {
+                <FolderItem Folder="item"
+                            IsNested="false"
+                            IsFolderEditing="IsFolderEditing"
+                            FolderChosenCallback="FolderChosenCallbackHandler"
+                            DataChangedCallback="DataChanged"/>
+
+                foreach (var nested in item.Folders)
+                {
+                    <FolderItem Folder="nested"
+                                IsNested="true"
+                                IsFolderEditing="IsFolderEditing"
+                                FolderChosenCallback="FolderChosenCallbackHandler"
+                                DataChangedCallback="DataChanged"/>
+                }
+
+                if (IsFolderEditing)
+                {
+                    <EmptyFolderItem IsNested="true" ParentId="item.Id" DataChangedCallback="DataChanged" />
+                }
+            }
+
+            @if (IsFolderEditing)
+            {
+                <EmptyFolderItem IsNested="false" ParentId="null" DataChangedCallback="DataChanged" />
+            }
+        </div>
+    </div>
+}

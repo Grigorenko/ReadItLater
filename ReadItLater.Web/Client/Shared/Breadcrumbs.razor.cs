@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
+using ReadItLater.Web.Client.Services.Http;
 using System;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Shared
@@ -11,7 +10,7 @@ namespace ReadItLater.Web.Client.Shared
     public partial class Breadcrumbs
     {
         [Inject]
-        public HttpClient Http { get; set; }
+        public FolderHttpService httpService { get; set; }
 
         [Inject]
         public Context Context { get; set; }
@@ -23,7 +22,7 @@ namespace ReadItLater.Web.Client.Shared
 
         public async Task FolderChangedEventHandler(Guid folderId, Guid? tagId)
         {
-            breadcrumbs = await Http.GetFromJsonAsync<BreadcrumbProjection[]>($"Folders/{folderId}/breadcrumbs");
+            breadcrumbs = await httpService.GetBreadcrumbsAsync(folderId);
 
             StateHasChanged();
         }

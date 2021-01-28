@@ -1,0 +1,11 @@
+﻿<div class="@(IsNested ? "nested" : "")">
+    <div class="item">
+        <input type="text" 
+               class="new-one @(IsNested ? "new-sub" : "new-root")" 
+               placeholder="folder"
+               @bind="value"/>
+        <div class="edit-tools">
+            <i class="fa fa-plus active" @onclick="AddFolder"></i>
+        </div>
+    </div>
+</div>

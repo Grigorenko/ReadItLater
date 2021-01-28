@@ -149,13 +149,13 @@ namespace ReadItLater.Web.Client.Pages
                 Console.WriteLine("Tag with the same name already added.");
 
             UpdateAutoFilledTags(autofilledTags);
+
+            tag = string.Empty;
         }
 
         private void AddTag()
         {
             AddTagByName(tag);
-
-            tag = string.Empty;
         }
 
         private void DeleteTag(string name)
