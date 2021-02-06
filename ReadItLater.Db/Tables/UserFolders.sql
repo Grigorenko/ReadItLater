@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[UserFolders]
+(
+	[UserId] UNIQUEIDENTIFIER NOT NULL,
+	[FolderId] UNIQUEIDENTIFIER NOT NULL,
+	CONSTRAINT [PK_UserFolders] PRIMARY KEY CLUSTERED ([UserId] ASC, [FolderId] ASC),
+	CONSTRAINT [FK_UserFolders_User_UserId] FOREIGN KEY([UserId]) REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE,
+	CONSTRAINT [FK_UserFolders_Folder_FolderId] FOREIGN KEY([FolderId]) REFERENCES [dbo].[Folders] ([Id]) ON DELETE CASCADE
+)

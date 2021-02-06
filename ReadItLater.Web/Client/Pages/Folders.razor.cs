@@ -5,6 +5,7 @@ using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
 using System.Linq;
 using ReadItLater.Web.Client.Services.Http;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace ReadItLater.Web.Client.Pages
 {
@@ -25,7 +26,15 @@ namespace ReadItLater.Web.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            folders = await GetFoldersAsync();
+            try
+            {
+                folders = await GetFoldersAsync();
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+
             Context.Subscribe(this);
         }
 

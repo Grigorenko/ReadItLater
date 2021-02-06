@@ -9,9 +9,7 @@ using ReadItLater.Data.EF.Interfaces;
 
 namespace ReadItLater.Web.Server.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class FoldersController : ControllerBase
+    public class FoldersController : BaseController
     {
         private readonly IDapperContext dapperContext;
         private readonly IDapperContext<TagListItemProjection> tagDapperContext;

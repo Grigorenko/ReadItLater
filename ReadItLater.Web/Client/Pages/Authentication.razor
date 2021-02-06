@@ -1,0 +1,24 @@
+﻿@page "/authentication/{*pageRoute}"
+
+<AuthorizeView>
+    <Authorized>
+        authorized
+    </Authorized>
+    <NotAuthorized>
+        <div class="wrapper">
+            <div class="left">
+                <h1>Read</h1>
+                <h1>It</h1>
+                <h1>Later!</h1>
+            </div>
+            @if (string.Equals(PageRoute, "login"))
+            {
+                <SignIn />
+            }
+            else if (string.Equals(PageRoute, "registration"))
+            {
+                <SignOut />
+            }
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

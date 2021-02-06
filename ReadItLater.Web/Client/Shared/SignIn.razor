@@ -1,0 +1,32 @@
+﻿<div class="right login-form">
+    <h1>Welcome!</h1>
+    <div class="soc-network">
+        <i class="fa fa-facebook"></i>
+        <i class="fa fa-google"></i>
+        <i class="fa fa-twitter"></i>
+    </div>
+    <label for="@loginRequest.UserName">UserName</label>
+    <div class="input-icon">
+        <i class="fa fa-user"></i>
+        <input type="text" @bind="loginRequest.UserName" placeholder="iam" />
+    </div>
+    <label for="@loginRequest.Password">Password</label>
+    <div class="input-icon">
+        <i class="fa fa-unlock-alt"></i>
+        <input type="password" @bind="loginRequest.Password" pattern="password" />
+    </div>
+    <div class="oneline">
+        <div>
+            <input type="checkbox" @bind="loginRequest.RememberMe" />
+            <span>Remember me</span>
+        </div>
+        <a>Forget password?</a>
+    </div>
+    <div class="btn-wrp">
+        <button @onclick="LoginAction">Sign in</button>
+    </div>
+    <p class="signup-text">
+        Don't have an account?
+        <a @onclick="RedirectToRegistration">Sign up</a>
+    </p>
+</div>

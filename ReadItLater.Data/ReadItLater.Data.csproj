@@ -8,8 +8,4 @@
     <PackageReference Include="System.Text.Json" Version="5.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ReadItLater.Data.EF\ReadItLater.Data.EF.csproj" />
-  </ItemGroup>
-
 </Project>

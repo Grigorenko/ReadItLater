@@ -1,0 +1,113 @@
+﻿.login-form {
+  display: flex;
+  flex-direction: column;
+  margin: 14em auto;
+}
+
+.right h1 {
+  text-align: center;
+  color: #666;
+}
+
+.soc-network {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  font-size: 1.2em;
+  color: #888;
+}
+
+  .soc-network i {
+    border: 1px solid #888;
+    border-radius: 2em;
+    cursor: pointer;
+  }
+
+    .soc-network i.fa-facebook {
+      padding: 0.5em 0.71em;
+    }
+
+    .soc-network i.fa-google {
+      padding: 0.5em 0.565em;
+    }
+
+    .soc-network i.fa-twitter {
+      padding: 0.5em 0.53em;
+    }
+
+.right label {
+  margin-top: 1em;
+  font-size: 0.8em;
+  color: #888;
+}
+
+.input-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+  .input-icon i {
+    font-size: 1.1em;
+    color: #888;
+    position: absolute;
+    padding: 0.2em;
+  }
+
+.right input {
+  font-size: 1.1em;
+  background-color: #F0F0F0;
+  border: none;
+  border-bottom: 1px solid #888;
+  padding: 0.2em 1.5em;
+  margin: 0.5em 0;
+}
+
+.oneline {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1em;
+  align-items: center;
+}
+
+  .oneline span {
+    padding-left: 0.5em;
+    color: #000;
+  }
+
+  .oneline a {
+    padding-left: 2em;
+    color: #888;
+    font-weight: bold;
+    font-size: 0.8em;
+    cursor: pointer;
+  }
+
+.right .btn-wrp {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.btn-wrp button {
+  margin-top: 1em;
+  width: 50%;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+  .btn-wrp button:hover {
+    background-color: #F0F0F0;
+  }
+
+.signup-text {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 3em;
+}
+
+  .signup-text a {
+    color: #3030ff;
+    cursor: pointer;
+  }

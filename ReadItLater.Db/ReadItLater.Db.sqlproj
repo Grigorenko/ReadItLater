@@ -88,6 +88,8 @@
     <Build Include="StoredProcedures\MoveDownFolder.sql" />
     <Build Include="StoredProcedures\DeleteFolder.sql" />
     <Build Include="StoredProcedures\SearchRefs.sql" />
+    <Build Include="Tables\Users.sql" />
+    <Build Include="Tables\UserFolders.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />

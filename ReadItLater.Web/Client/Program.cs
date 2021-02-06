@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using ReadItLater.Web.Client.Services;
-using ReadItLater.Web.Client.Services.Http;
-using System;
 using System.Threading.Tasks;
+using ReadItLater.Web.Client.Services.Auth;
 
 namespace ReadItLater.Web.Client
 {
@@ -23,10 +23,13 @@ namespace ReadItLater.Web.Client
 
         private static void ConfigureServices(IServiceCollection services, IWebAssemblyHostEnvironment env)
         {
-            services.AddSingleton(typeof(Context));
-            services.AddHttpClient<RefHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
-            services.AddHttpClient<FolderHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
-            services.AddHttpClient<TagHttpService>(c => c.BaseAddress = new Uri(env.BaseAddress));
+            services.AddSingleton<Context>();
+            services.AddSingleton<UserToken>();
+            services.ConfigureHttpClients(env);
+
+            services.AddAuthorizationCore();
+            services.AddScoped<CustomAuthStateProvider>();
+            services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<CustomAuthStateProvider>());
         }
     }
 }

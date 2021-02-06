@@ -6,9 +6,7 @@ using Microsoft.Extensions.Hosting;
 using ReadItLater.BL;
 using ReadItLater.Data.EF;
 using ReadItLater.Data.EF.Interfaces;
-using ReadItLater.Data.EF.Options;
 using ReadItLater.Data.EF.Utils;
-using System;
 
 namespace ReadItLater.Web.Server
 {
@@ -23,17 +21,8 @@ namespace ReadItLater.Web.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var section = Configuration.GetSection(MsSqlDbConnection.DbConnectionSection);
-
-            if (!section.Exists())
-                throw new ArgumentNullException(nameof(MsSqlDbConnection.DbConnectionSection));
-
-            var connection = new MsSqlDbConnection
-            {
-                ConnectionString = section.GetValue<string>(nameof(MsSqlDbConnection.Default))
-            };
-
-            services.AddSingleton<IDbConnection>(connection);
+            services.AddDbConnection();
+            services.AddCustomAuthentication();
 
             services.AddScoped(typeof(IDapperContext<>), typeof(DapperWrapper<>));
             services.AddScoped<IDapperContext, DapperContext>();
@@ -59,6 +48,14 @@ namespace ReadItLater.Web.Server
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseRequestResponseMiddleware(options =>
+            {
+                options.Request.ShowBody = true;
+                options.Response.IsShowed = true;
+                options.Response.ShowBody = false;
+            });
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

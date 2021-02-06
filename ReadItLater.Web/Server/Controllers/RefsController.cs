@@ -9,9 +9,7 @@ using System.Linq;
 
 namespace ReadItLater.Web.Server.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class RefsController : ControllerBase
+    public class RefsController : BaseController
     {
         private readonly IDapperContext dapperContext;
         private readonly IDapperContext<Ref> refContext;

@@ -1,0 +1,10 @@
+﻿<div class="right registration-form">
+    <h1><span class="active" @onclick="RedirectToLogin">Login</span> / <span>Registration</span></h1>
+    <label for="@registerRequest.UserName">UserName</label>
+    <input type="text" @bind="registerRequest.UserName" placeholder="iam" />
+    <label for="@registerRequest.Password">Password</label>
+    <input type="password" @bind="registerRequest.Password" pattern="password" />
+    <label for="@registerRequest.PasswordConfirm">Password Confirm</label>
+    <input type="password" @bind="registerRequest.PasswordConfirm" pattern="password" />
+    <button @onclick="RegistrationAction">Registration</button>
+</div>

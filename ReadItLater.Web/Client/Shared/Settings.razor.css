@@ -5,3 +5,7 @@
   color: #a9a9a9;
   font-size: 1.1em;
 }
+
+.icons i:hover {
+  color: #222;
+}

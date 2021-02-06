@@ -7,9 +7,7 @@ using ReadItLater.Data.EF.Interfaces;
 
 namespace ReadItLater.Web.Server.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class TagsController : ControllerBase
+    public class TagsController : BaseController
     {
         private readonly IDapperContext<TagProjection> tagDapperContext;
 

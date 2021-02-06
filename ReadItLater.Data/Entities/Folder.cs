@@ -1,5 +1,4 @@
-﻿using Core.Data.EFCore.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ReadItLater.Data
