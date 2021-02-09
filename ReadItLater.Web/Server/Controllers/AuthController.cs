@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ReadItLater.Web.Server.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : BaseController
     {
         private readonly AuthenticationConfiguration config;
@@ -28,7 +29,6 @@ namespace ReadItLater.Web.Server.Controllers
         };
         static bool IsAuth = false;
 
-        [AllowAnonymous]
         [HttpGet("currentuserinfo")]
         public Task<CurrentUser> CurrentUserInfo()
         {
@@ -49,7 +49,6 @@ namespace ReadItLater.Web.Server.Controllers
             return Task.FromResult(user);
         }
 
-        [AllowAnonymous]
         [HttpPost("login")]
         public Task Login([FromBody] LoginRequest loginRequest)
         {
@@ -59,7 +58,6 @@ namespace ReadItLater.Web.Server.Controllers
             return Task.CompletedTask;
         }
 
-        [AllowAnonymous]
         [HttpPost("register")]
         public Task Register(RegisterRequest registerRequest)
         {

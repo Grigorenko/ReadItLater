@@ -1,8 +1,7 @@
-﻿.login-form {
+﻿.registration-form {
   display: flex;
   flex-direction: column;
   margin: 14em auto;
-  width: 20em;
 }
 
 .right h1 {
@@ -16,13 +15,13 @@
   justify-content: space-evenly;
   font-size: 1.2em;
   color: #888;
+  margin-bottom: 1em;
 }
 
   .soc-network i {
     border: 1px solid #888;
     border-radius: 2em;
     cursor: pointer;
-    margin-bottom: 1em;
   }
 
     .soc-network i.fa-facebook {
@@ -56,14 +55,14 @@
     padding: 0.2em;
   }
 
-/*input {
+.right input {
   font-size: 1.1em;
   background-color: #F0F0F0;
   border: none;
   border-bottom: 1px solid #888;
   padding: 0.2em 1.5em;
   margin: 0.5em 0;
-}*/
+}
 
 .oneline {
   display: flex;

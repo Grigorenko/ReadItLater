@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReadItLater.Web.Client.Shared
 {
-    public partial class SignOut : IDisposable
+    public partial class SignUp : IDisposable
     {
         [Inject]
         private CustomAuthStateProvider CustomStateProvider { get; set; }
@@ -29,7 +29,7 @@ namespace ReadItLater.Web.Client.Shared
             Navigation.NavigateTo("/");
         }
 
-        private async Task RegistrationAction()
+        private async Task HandleValidSubmit()
         {
             await CustomStateProvider.Register(registerRequest);
         }

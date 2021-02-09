@@ -29,7 +29,7 @@ namespace ReadItLater.Web.Client.Shared
             Navigation.NavigateTo("/");
         }
 
-        private async Task LoginAction()
+        private async Task HandleValidSubmit()
         {
             await CustomStateProvider.Login(loginRequest);
         }

@@ -1,4 +1,4 @@
-﻿<EditForm Model="loginRequest" OnValidSubmit="HandleValidSubmit" AdditionalAttributes="FormStyles">
+﻿<EditForm Model="registerRequest" OnValidSubmit="HandleValidSubmit" AdditionalAttributes="FormStyles">
     <DataAnnotationsValidator />
     <h1>Welcome!</h1>
     <div class="soc-network">
@@ -6,33 +6,33 @@
         <i class="fa fa-google"></i>
         <i class="fa fa-twitter"></i>
     </div>
-    <label for="@loginRequest.UserName">Username</label>
+    <label for="@registerRequest.UserName">Username</label>
     <div class="input-icon">
         <i class="fa fa-user"></i>
-        <InputText @bind-Value="loginRequest.UserName" AdditionalAttributes="InputStyles" />
+        <InputText @bind-Value="registerRequest.UserName" AdditionalAttributes="InputStyles" />
     </div>
-    <ValidationMessage For="@(() => loginRequest.UserName)" AdditionalAttributes="ValidationStyles" />
+    <ValidationMessage For="@(() => registerRequest.UserName)" AdditionalAttributes="ValidationStyles" />
 
-    <label for="@loginRequest.Password">Password</label>
+    <label for="@registerRequest.Password">Password</label>
     <div class="input-icon">
         <i class="fa fa-unlock-alt"></i>
-        <InputText @bind-Value="loginRequest.Password" AdditionalAttributes="InputStyles" />
+        <InputText @bind-Value="registerRequest.Password" AdditionalAttributes="InputStyles" />
     </div>
-    <ValidationMessage For="@(() => loginRequest.Password)" AdditionalAttributes="ValidationStyles" />
-    
-    <div class="oneline">
-        <div>
-            <input type="checkbox" @bind="loginRequest.RememberMe" />
-            <span>Remember me</span>
-        </div>
-        <a>Forget password?</a>
+    <ValidationMessage For="@(() => registerRequest.Password)" AdditionalAttributes="ValidationStyles" />
+
+    <label for="@registerRequest.PasswordConfirm">Confirm Password</label>
+    <div class="input-icon">
+        <i class="fa fa-unlock-alt"></i>
+        <InputText @bind-Value="registerRequest.PasswordConfirm" AdditionalAttributes="InputStyles" />
     </div>
+    <ValidationMessage For="@(() => registerRequest.PasswordConfirm)" AdditionalAttributes="ValidationStyles" />
+
     <div class="btn-wrp">
-        <button type="submit">Sign in</button>
+        <button type="submit">Sign Up</button>
     </div>
     <p class="signup-text">
-        Don't have an account?
-        <a @onclick="RedirectToRegistration">Sign up</a>
+        Already exist an account?
+        <a @onclick="RedirectToLogin">Sign in</a>
     </p>
 </EditForm>
 
