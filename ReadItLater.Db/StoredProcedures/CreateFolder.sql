@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[CreateFolder]
+	@userId UNIQUEIDENTIFIER,
 	@folder [FolderUdt] READONLY
 AS
 	DECLARE @currentId UNIQUEIDENTIFIER;
@@ -12,3 +13,6 @@ AS
 
 	INSERT INTO [Folders] ([Id], [ParentId], [Name], [Order])
 	SELECT TOP 1 @currentId, [ParentId], [Name], @order FROM @folder;
+
+	INSERT INTO [UserFolders] ([UserId], [FolderId])
+	VALUES (@userId, @currentId);

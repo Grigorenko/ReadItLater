@@ -23,8 +23,8 @@ namespace ReadItLater.Web.Server.Utils
 
         public async Task InvokeAsync(HttpContext context)
         {
-            IDictionary<string, string> requestParams = await GetRequestData(context);
-            IDictionary<string, string> responseParams = null;
+            IDictionary<string, string>? requestParams = await GetRequestData(context);
+            IDictionary<string, string>? responseParams = null;
 
             if (!options.Response.IsShowed)
                 await _next.Invoke(context);
@@ -35,7 +35,7 @@ namespace ReadItLater.Web.Server.Utils
             WriteToConsole(requestParams, responseParams);
         }
 
-        private async Task<IDictionary<string, string>> GetRequestData(HttpContext context)
+        private async Task<IDictionary<string, string>?> GetRequestData(HttpContext context)
         {
             if (!options.Request.IsShowed)
                 return null;
@@ -50,7 +50,7 @@ namespace ReadItLater.Web.Server.Utils
                 requestParams.Add(nameof(request.Path), request.Path);
 
             if (options.Request.ShowQueryString && request.QueryString.HasValue)
-                requestParams.Add(nameof(request.QueryString), request.QueryString.Value);
+                requestParams.Add(nameof(request.QueryString), request.QueryString.Value!);
 
             if (options.Request.ShowHeaders)
             {
@@ -90,30 +90,14 @@ namespace ReadItLater.Web.Server.Utils
             return requestParams;
         }
 
-        private async Task<IDictionary<string, string>> GetResponseData(HttpContext context)
+        private async Task<IDictionary<string, string>?> GetResponseData(HttpContext context)
         {
             if (!options.Response.IsShowed)
                 return null;
 
             var response = context.Response;
             var responseParams = new Dictionary<string, string>();
-
-            if (options.Response.ShowStatusCode)
-                responseParams.Add(nameof(response.StatusCode), response.StatusCode.ToString());
-
-            if (options.Response.ShowHeaders)
-            {
-                var headers = response.Headers
-                    .ToDictionary(a => a.Key, a => a.Value);
-
-                if (headers.Any())
-                {
-                    var headerStrings = headers
-                        .Select(h => $"\t{h.Key}:\t{h.Value}");
-
-                    responseParams.Add(nameof(response.Headers), "\n" + string.Join("\n", headers));
-                }
-            }
+            string? bodyStr = null;
 
             if (options.Response.ShowBody)
             {
@@ -133,7 +117,7 @@ namespace ReadItLater.Web.Server.Utils
                         if (!string.IsNullOrEmpty(json) && !json.StartsWith("<!DOCTYPE html>"))
                         {
                             var body = JsonSerializer.Serialize(JsonSerializer.Deserialize<dynamic>(json), new JsonSerializerOptions { WriteIndented = true });
-                            responseParams.Add(nameof(response.Body), "\n" + body);
+                            bodyStr = "\n" + body;
                         }
                     }
 
@@ -146,11 +130,30 @@ namespace ReadItLater.Web.Server.Utils
             else
                 await _next.Invoke(context);
 
+            if (options.Response.ShowStatusCode)
+                responseParams.Add(nameof(response.StatusCode), response.StatusCode.ToString());
+
+            if (options.Response.ShowHeaders)
+            {
+                var headers = response.Headers
+                    .ToDictionary(a => a.Key, a => a.Value);
+
+                if (headers.Any())
+                {
+                    var headerStrings = headers
+                        .Select(h => $"\t{h.Key}:\t{h.Value}");
+
+                    responseParams.Add(nameof(response.Headers), "\n" + string.Join("\n", headers));
+                }
+            }
+
+            if (options.Response.ShowBody && !string.IsNullOrEmpty(bodyStr))
+                responseParams.Add(nameof(response.Body), bodyStr);
 
             return responseParams;
         }
 
-        private void WriteToConsole(IDictionary<string, string> requestParams, IDictionary<string, string> responseParams)
+        private void WriteToConsole(IDictionary<string, string>? requestParams, IDictionary<string, string>? responseParams)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\n\n" + new string('=', 70));
@@ -185,6 +188,12 @@ namespace ReadItLater.Web.Server.Utils
                         Console.ResetColor();
                     });
             }
+
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n\n" + new string('=', 70));
+            Console.ResetColor();
+            Console.WriteLine();
         }
     }
 

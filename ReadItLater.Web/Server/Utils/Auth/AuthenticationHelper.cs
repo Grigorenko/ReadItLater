@@ -17,7 +17,7 @@ namespace ReadItLater.Web.Server.Utils
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, userId)
+                    new Claim(ClaimTypes.NameIdentifier, userId)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(jwtTokenExpirationTimeInMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

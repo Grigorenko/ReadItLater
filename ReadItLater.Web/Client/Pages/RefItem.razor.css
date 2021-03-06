@@ -16,15 +16,21 @@
       align-items: center;
     }
 
-    .item .info .settings .left {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
+      .item .info .settings .left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
 
       .item .info .settings i {
+        margin-left: 0.5em;
         cursor: pointer;
+        color: #a9a9a9
       }
+
+        .item .info .settings i:hover {
+          color: #222
+        }
 
     .item .info .item-date {
       color: #c7c7c7;
@@ -37,10 +43,10 @@
       overflow-wrap: break-word;
     }
 
-    .item .info .item-title a {
-      text-decoration: none;
-      color: #000;
-    }
+      .item .info .item-title a {
+        text-decoration: none;
+        color: #000;
+      }
 
     .item .info .item-tags {
       display: flex;

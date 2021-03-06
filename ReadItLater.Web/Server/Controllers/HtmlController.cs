@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReadItLater.BL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ReadItLater.Data;
+using ReadItLater.HtmlParser;
 
 namespace ReadItLater.Web.Server.Controllers
 {
@@ -21,17 +21,14 @@ namespace ReadItLater.Web.Server.Controllers
         public async Task<Ref> GetMeta([FromQuery] string url)
         {
             var meta = await htmlParser.GetMetaAsync(url);
-            //var tags = TryGetTags(url, meta.title);
 
             return new Ref
             {
                 Id = Guid.NewGuid(),
-                //FolderId = Storage.DefaultFolder.Id,
-                Title = meta.title,
+                Title = meta.title ?? string.Empty,
                 Url = url,
                 Image = meta.image,
                 Priority = Priority.Low,
-                //Tags = tags,
                 Date = DateTime.Now
             };
         }
@@ -59,7 +56,6 @@ namespace ReadItLater.Web.Server.Controllers
                 .ForEach(x => tags.Add(KnownTags[x]));
 
             return tags.ToArray();
-
         }
     }
 }

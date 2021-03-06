@@ -10,8 +10,8 @@ namespace ReadItLater.Data
         public string Name { get; set; }
         public int Order { get; set; }
 
-        public ICollection<Ref> Refs { get; set; }
-        public ICollection<Folder> Folders { get; set; }
-        public Folder Parent { get; set; }
+        public ICollection<Ref>? Refs { get; set; }
+        public ICollection<Folder>? Folders { get; set; }
+        public Folder? Parent { get; set; }
     }
 }

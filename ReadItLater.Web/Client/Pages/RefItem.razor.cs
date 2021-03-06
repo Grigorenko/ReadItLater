@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using ReadItLater.Data;
 using ReadItLater.Web.Client.Services;
 using ReadItLater.Web.Client.Services.Http;
@@ -18,6 +19,9 @@ namespace ReadItLater.Web.Client.Pages
         [Inject]
         public Context Context { get; set; }
 
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
         private void ChooseTag(Guid tagId)
         {
             Context.TagChosen(tagId);
@@ -26,6 +30,11 @@ namespace ReadItLater.Web.Client.Pages
         private void EditRef()
         {
             Context.RefEditing(Item.Id);
+        }
+
+        private async Task ShareRef()
+        {
+            await JSRuntime.InvokeVoidAsync("window.prompt", "Shared link", Item.Url);
         }
 
         private async Task RefView()

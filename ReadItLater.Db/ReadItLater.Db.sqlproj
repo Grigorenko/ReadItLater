@@ -90,6 +90,8 @@
     <Build Include="StoredProcedures\SearchRefs.sql" />
     <Build Include="Tables\Users.sql" />
     <Build Include="Tables\UserFolders.sql" />
+    <Build Include="StoredProcedures\SelectUserByCredentials.sql" />
+    <Build Include="StoredProcedures\CreateUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment.sql" />

@@ -7,7 +7,10 @@
                 @DotsIcon(((int)Item.Priority) + 1)
                 <p class="item-date">@Item.Date</p>
             </div>
-            <i class="fa fa-sliders" @onclick="EditRef"></i>
+            <div>
+                <i class="fa fa-sliders" @onclick="EditRef"></i>
+                <i class="fa fa-share-square-o" @onclick="ShareRef"></i>
+            </div>
         </div>
         <p class="item-title"><a href="@Item.Url" target="_blank" @onclick="RefView">@Item.Title</a></p>
         <div class="item-tags">

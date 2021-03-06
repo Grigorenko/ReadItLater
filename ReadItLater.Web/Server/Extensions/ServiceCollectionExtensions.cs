@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using ReadItLater.Data.EF.Options;
+using ReadItLater.Core.Web;
 using ReadItLater.Web.Server.Utils;
 using System;
 using System.Text;
@@ -11,24 +11,6 @@ namespace ReadItLater.Web.Server
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDbConnection(this IServiceCollection services)
-        {
-            var configuration = services.GetConfiguration();
-            var section = configuration.GetSection(MsSqlDbConnection.DbConnectionSection);
-
-            if (!section.Exists())
-                throw new ArgumentNullException(nameof(MsSqlDbConnection.DbConnectionSection));
-
-            var connection = new MsSqlDbConnection
-            {
-                ConnectionString = section.GetValue<string>(nameof(MsSqlDbConnection.Default))
-            };
-
-            services.AddSingleton<IDbConnection>(connection);
-
-            return services;
-        }
-
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services)
         {
             var configuration = services.GetConfiguration();
@@ -36,6 +18,9 @@ namespace ReadItLater.Web.Server
 
             AuthenticationConfiguration options = new AuthenticationConfiguration();
             configuration.GetSection(AuthenticationConfiguration.AuthenticationSection).Bind(options);
+
+            if (string.IsNullOrEmpty(options.Secret))
+                throw new ArgumentNullException(nameof(options.Secret));
 
             byte[] secret = Encoding.ASCII.GetBytes(options.Secret);
 
@@ -56,16 +41,6 @@ namespace ReadItLater.Web.Server
                 });
 
             return services;
-        }
-
-        private static IConfiguration GetConfiguration(this IServiceCollection services)
-        {
-            var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-
-            if (configuration is null)
-                throw new Exception($"{nameof(IConfiguration)} haven't registered.");
-
-            return configuration;
         }
     }
 }

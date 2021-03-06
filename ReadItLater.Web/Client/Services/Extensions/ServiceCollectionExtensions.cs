@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using ReadItLater.Web.Client.Services.Auth;
 using ReadItLater.Web.Client.Services.Http;
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace ReadItLater.Web.Client.Services
 {
@@ -17,13 +15,7 @@ namespace ReadItLater.Web.Client.Services
             services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(DefaultHttpClientName));
             services.AddHttpClient(DefaultHttpClientName, (serviceProvider, client) =>
             {
-                var tokenService = serviceProvider.GetRequiredService<UserToken>();
-
-                if (tokenService is null)
-                    throw new Exception($"{nameof(UserToken)} service must be registered before HttpClient service.");
-
                 client.BaseAddress = new Uri(env.BaseAddress);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.Token);
             });
 
             services.AddHttpClient<RefHttpService>(DefaultHttpClientName);

@@ -6,7 +6,7 @@ namespace ReadItLater.Web.Server
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseRequestResponseMiddleware(this IApplicationBuilder app, Action<RequestResponseOptions> options = null)
+        public static IApplicationBuilder UseRequestResponseMiddleware(this IApplicationBuilder app, Action<RequestResponseOptions>? options = null)
         {
             var newOptions = new RequestResponseOptions();
             options?.Invoke(newOptions);

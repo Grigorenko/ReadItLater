@@ -1,94 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using ReadItLater.Data;
-using ReadItLater.Data.EF.Interfaces;
+using ReadItLater.Core.Infrastructure.Utils;
+using ReadItLater.Infrastructure.Commands.Folders;
+using ReadItLater.Data.Dtos.Folder;
+using ReadItLater.Infrastructure.Queries.Folders;
 
 namespace ReadItLater.Web.Server.Controllers
 {
     public class FoldersController : BaseController
     {
-        private readonly IDapperContext dapperContext;
-        private readonly IDapperContext<TagListItemProjection> tagDapperContext;
-        private readonly IDapperContext<FolderListItemProjection> folderDapperContext;
-        private readonly IDapperContext<BreadcrumbProjection> breadcrumbDapperContext;
-
-        public FoldersController(
-            IDapperContext dapperContext,
-            IDapperContext<TagListItemProjection> tagDapperContext,
-            IDapperContext<FolderListItemProjection> folderDapperContext,
-            IDapperContext<BreadcrumbProjection> breadcrumbDapperContext)
+        public FoldersController(IMessages messages) : base(messages)
         {
-            this.dapperContext = dapperContext;
-            this.tagDapperContext = tagDapperContext;
-            this.folderDapperContext = folderDapperContext;
-            this.breadcrumbDapperContext = breadcrumbDapperContext;
         }
 
         [HttpGet("list")]
-        public async Task<IEnumerable<FolderListItemProjection>> GetList(CancellationToken cancellationToken)
-        {
-            var folders = await folderDapperContext.SelectAsync("SelectFolderListItems", commandType: System.Data.CommandType.StoredProcedure, cancellationToken: cancellationToken);
-            var root = folders.Where(f => f.ParentId is null).OrderBy(f => f.Order).ToList();
-
-            foreach (var item in root)
-            {
-                var nested = folders.Where(f => f.ParentId == item.Id).OrderBy(f => f.Order).ToList();
-
-                item.RefsCount += nested.Sum(n => n.RefsCount);
-                item.Folders = nested;
-            }
-
-            return root;
-        }
+        public async Task<ActionResult<IEnumerable<FolderListItemProjection>>> GetList() =>
+            await ExecuteQuery(new GetFoldersListQuery());
 
         [HttpGet("{id:guid}/tags")]
-        public async Task<IEnumerable<TagListItemProjection>> GetTags(Guid id, CancellationToken cancellationToken)
-        {
-            var tags = await tagDapperContext.SelectAsync("GetTagsByFolder", new { folderId = id }, System.Data.CommandType.StoredProcedure, cancellationToken);
-
-            return tags;
-        }
+        public async Task<ActionResult<IEnumerable<TagListItemProjection>>> GetTags(Guid id) =>
+            await ExecuteQuery(new GetTagsByFolderQuery(id));
 
         [HttpGet("{id:guid}/breadcrumbs")]
-        public async Task<IEnumerable<BreadcrumbProjection>> GetBreadcrumbs(Guid id, CancellationToken cancellationToken)
-        {
-            var breadcrumbs = await breadcrumbDapperContext.SelectAsync("GetBreadcrumbs", new { id }, System.Data.CommandType.StoredProcedure, cancellationToken);
-
-            return breadcrumbs;
-        }
+        public async Task<ActionResult<IEnumerable<BreadcrumbProjection>>> GetBreadcrumbs(Guid id) =>
+            await ExecuteQuery(new GetBreadcrumbsQuery(id));
 
         [HttpPost]
-        public async Task Create([FromBody]Folder folder, CancellationToken cancellationToken)
-        {
-            await dapperContext.ExecuteProcedureAsync("CreateFolder", new { folder = folder.ToUdt() }, cancellationToken);
-        }
+        public async Task<IActionResult> Create([FromBody] CreateFolderDto folder) =>
+            await ExecuteCommand(new CreateFolderCommand(folder.Id, folder.ParentId, folder.Name!));
 
         [HttpPatch("{id:guid}/name/{name}")]
-        public async Task Rename([FromRoute] Guid id, [FromRoute] string name, CancellationToken cancellationToken)
-        {
-            await dapperContext.ExecuteProcedureAsync("RenameFolder", new { id, name }, cancellationToken);
-        }
+        public async Task<IActionResult> Rename([FromRoute] Guid id, [FromRoute] string name) =>
+            await ExecuteCommand(new ChangeFolderNameCommand(id, name));
 
         [HttpPatch("{id:guid}/moveup")]
-        public async Task MoveUp([FromRoute] Guid id,  CancellationToken cancellationToken)
-        {
-            await dapperContext.ExecuteProcedureAsync("MoveUpFolder", new { id }, cancellationToken);
-        }
+        public async Task<IActionResult> MoveUp([FromRoute] Guid id) =>
+            await ExecuteCommand(new MoveUpFolderCommand(id));
 
         [HttpPatch("{id:guid}/movedown")]
-        public async Task MoveDown([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await dapperContext.ExecuteProcedureAsync("MoveDownFolder", new { id }, cancellationToken);
-        }
+        public async Task<IActionResult> MoveDown([FromRoute] Guid id) =>
+            await ExecuteCommand(new MoveDownFolderCommand(id));
 
         [HttpDelete("{id:guid}")]
-        public async Task Delete([FromRoute] Guid id, CancellationToken cancellationToken)
-        {
-            await dapperContext.ExecuteProcedureAsync("DeleteFolder", new { id }, cancellationToken);
-        }
+        public async Task Delete([FromRoute] Guid id) =>
+            await ExecuteCommand(new DeleteFolderCommand(id));
     }
 }

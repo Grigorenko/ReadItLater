@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ReadItLater.Data;
@@ -8,6 +7,12 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using ReadItLater.Web.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Linq;
+using ReadItLater.Core.Infrastructure.Utils;
+using ReadItLater.Infrastructure.Queries.User;
+using ReadItLater.Core.Infrastructure;
+using ReadItLater.Infrastructure.Commands.User;
 
 namespace ReadItLater.Web.Server.Controllers
 {
@@ -16,59 +21,69 @@ namespace ReadItLater.Web.Server.Controllers
     {
         private readonly AuthenticationConfiguration config;
 
-        public AuthController(IOptions<AuthenticationConfiguration> options)
+        public AuthController(
+            IMessages messages,
+            IOptions<AuthenticationConfiguration> options)
+            : base(messages)
         {
-            this.config = options.Value;
+            config = options.Value;
         }
-
-        private readonly User ExistUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Name = "iam",
-            Pass = "123"
-        };
-        static bool IsAuth = false;
 
         [HttpGet("currentuserinfo")]
         public Task<CurrentUser> CurrentUserInfo()
         {
-            if (!IsAuth)
+            if (!User.Identity?.IsAuthenticated ?? true)
                 return Task.FromResult(CurrentUser.Unauthorized);
 
             var user = new CurrentUser
             {
-                IsAuthenticated = IsAuth,
-                UserName = ExistUser.Name,
-                Claims = new Dictionary<string, string>
-                {
-                    [ClaimsIdentity.DefaultNameClaimType] = ExistUser.Name
-                },
-                Token = AuthenticationHelper.GenerateJwtToken(ExistUser.Id.ToString(), config.Secret!, config.JwtTokenExpirationTimeInMinutes)
+                IsAuthenticated = User.Identity!.IsAuthenticated,
+                UserName = User.FindFirstValue(ClaimTypes.Name),
+                Claims = User.Claims.ToDictionary(p => p.Type, p => p.Value),
+                Token = AuthenticationHelper.GenerateJwtToken(User.FindFirstValue(ClaimTypes.NameIdentifier), config.Secret!, config.JwtTokenExpirationTimeInMinutes)
             };
 
             return Task.FromResult(user);
         }
 
         [HttpPost("login")]
-        public Task Login([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<CurrentUser>> Login([FromBody] LoginRequest loginRequest)
         {
-            if (ExistUser.Name.Equals(loginRequest.UserName) && ExistUser.Pass.Equals(loginRequest.Password))
-                IsAuth = true;
+            var result = await messages.DispatchAsync(new GetUserByCredentialsQuery(loginRequest.UserName!, loginRequest.Password!), HttpContext.RequestAborted);
 
-            return Task.CompletedTask;
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(Result.Success(
+                new CurrentUser
+                {
+                    IsAuthenticated = true,
+                    //UserName = User.FindFirstValue(ClaimTypes.Name),
+                    Claims = GetUserClaims(result.Value!).ToDictionary(p => p.Type, p => p.Value),
+                    Token = AuthenticationHelper.GenerateJwtToken(result.Value!.Id.ToString(), config.Secret!, config.JwtTokenExpirationTimeInMinutes)
+                }));
         }
 
         [HttpPost("register")]
-        public Task Register(RegisterRequest registerRequest)
-        {
-            return Task.CompletedTask;
-        }
+        public async Task Register(RegisterRequest registerRequest) =>
+            await ExecuteCommand(new CreateUserCommand(registerRequest.UserName!, registerRequest.Password!));
 
         [HttpPost("logout")]
         public Task Logout()
         {
-            IsAuth = false;
+            //delete current token
+            SignOut(JwtBearerDefaults.AuthenticationScheme);
             return Task.CompletedTask;
+        }
+
+        private IEnumerable<Claim> GetUserClaims(UserProjection user)
+        {
+            return new Dictionary<string, string>
+            {
+                [ClaimTypes.NameIdentifier] = user.Id.ToString(),
+                [ClaimTypes.Name] = user.Name
+            }
+            .Select(p => new Claim(p.Key, p.Value));
         }
     }
 }

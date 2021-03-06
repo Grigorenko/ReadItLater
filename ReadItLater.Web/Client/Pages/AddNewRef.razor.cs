@@ -140,10 +140,10 @@ namespace ReadItLater.Web.Client.Pages
             }
 
             if (model.Tags is null)
-                model.Tags = new List<Tag>();
+                model.Tags = new List<TagProjection>();
 
             if (!model.Tags.Any(x => x.Name.Equals(name)))
-                model.Tags.Add(new Tag { Name = name });
+                model.Tags.Add(new TagProjection { Name = name });
 
             else
                 Console.WriteLine("Tag with the same name already added.");

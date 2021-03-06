@@ -1,12 +1,13 @@
+using Core.Api.Actions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ReadItLater.BL;
-using ReadItLater.Data.EF;
-using ReadItLater.Data.EF.Interfaces;
-using ReadItLater.Data.EF.Utils;
+using ReadItLater.Core.Api.Actions;
+using ReadItLater.Core.Infrastructure.Utils;
+using ReadItLater.HtmlParser;
+using ReadItLater.Web.Server.Utils.Auth;
 
 namespace ReadItLater.Web.Server
 {
@@ -21,13 +22,27 @@ namespace ReadItLater.Web.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbConnection();
-            services.AddCustomAuthentication();
+            services
+                .AddMsSqlDbConnection()
+                .AddAssembliesConfiguration()
+                .AddDapperRepositoryProvider();
+            services
+                .AddMessages()
+                .AddValidators()
+                .AddQueryHandlers()
+                .AddCommandHandlers();
+            services
+                //.AddSwaggerConfiguration()
+                .ConfigureApiBehavior()
+                .AddControllers()
+                .AddCustomJsonConfiguration()
+                .AddDtoValidation();
 
-            services.AddScoped(typeof(IDapperContext<>), typeof(DapperWrapper<>));
-            services.AddScoped<IDapperContext, DapperContext>();
+            services
+                .AddCustomAuthentication()
+                .AddScoped<IUserProvider, UserProvider>();
 
-            services.AddSingleton<IHtmlParser, HtmlParser>();
+            services.AddSingleton<IHtmlParser, HtmlParser.HtmlParser>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -50,8 +65,11 @@ namespace ReadItLater.Web.Server
             app.UseRouting();
             app.UseRequestResponseMiddleware(options =>
             {
-                options.Request.ShowBody = true;
+                options.Request.ShowHeaders = false;
+                options.Request.ShowBody = false;
+
                 options.Response.IsShowed = true;
+                options.Response.ShowHeaders = false;
                 options.Response.ShowBody = false;
             });
             app.UseAuthentication();

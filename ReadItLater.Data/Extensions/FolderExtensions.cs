@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Linq;
-using System.Reflection;
+﻿using System.Data;
 
 namespace ReadItLater.Data
 {
@@ -12,24 +9,14 @@ namespace ReadItLater.Data
             var dt = new DataTable("FolderUdt");
             var propTypes = typeof(Folder).GetProperties();
 
-            dt.Columns.Add(GetProperty(propTypes, nameof(Folder.Id)));
-            dt.Columns.Add(GetProperty(propTypes, nameof(Folder.ParentId)));
-            dt.Columns.Add(GetProperty(propTypes, nameof(Folder.Name)));
-            dt.Columns.Add(GetProperty(propTypes, nameof(Folder.Order)));
+            dt.Columns.Add(propTypes.GetProperty(nameof(Folder.Id)));
+            dt.Columns.Add(propTypes.GetProperty(nameof(Folder.ParentId)));
+            dt.Columns.Add(propTypes.GetProperty(nameof(Folder.Name)));
+            dt.Columns.Add(propTypes.GetProperty(nameof(Folder.Order)));
 
             dt.Rows.Add(model.Id, model.ParentId, model.Name, model.Order);
 
             return dt;
-        }
-
-        private static DataColumn GetProperty(PropertyInfo[] properties, string name)
-        {
-            var type = properties.Single(p => p.Name.Equals(name)).PropertyType;
-
-            if (type.IsEnum)
-                type = typeof(int);
-
-            return new DataColumn(name, Nullable.GetUnderlyingType(type) ?? type);
         }
     }
 }

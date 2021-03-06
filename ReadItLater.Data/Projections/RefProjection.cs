@@ -12,12 +12,12 @@ namespace ReadItLater.Data
         public Guid? FolderId { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
         public Priority Priority { get; set; }
-        public DateTime Date { get; private set; } = DateTime.UtcNow;
-        public string Note { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public string? Note { get; set; }
 
-        public ICollection<Tag> Tags { get; set; }
+        public ICollection<TagProjection>? Tags { get; set; }
 
         public override string ToString()
         {

@@ -14,6 +14,6 @@ namespace ReadItLater.Data
         public bool IsArrowUpActive { get; set; } = true;
         public bool IsArrowDownActive { get; set; } = true;
 
-        public ICollection<FolderListItemProjection> Folders { get; set; }
+        public ICollection<FolderListItemProjection>? Folders { get; set; }
     }
 }

@@ -31,8 +31,9 @@ namespace ReadItLater.Web.Client.Services.Auth
 
                 if (userInfo.IsAuthenticated)
                 {
-                    var claims = new[] { new Claim(ClaimTypes.Name, currentUser.UserName) }
-                        .Concat(currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
+                    var claims = currentUser.Claims.Select(c => new Claim(c.Key, c.Value)).ToList();
+                    //var claims = new[] { new Claim(ClaimTypes.Name, currentUser.UserName) }
+                    //    .Concat(currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
                     identity = new ClaimsIdentity(claims, "Server authentication");
                     this.userToken.Token = userInfo.Token;
                 }
@@ -49,6 +50,7 @@ namespace ReadItLater.Web.Client.Services.Auth
         public async Task Logout()
         {
             await api.Logout();
+            userToken.Token = null;
             currentUser = null;
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
