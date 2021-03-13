@@ -31,6 +31,7 @@ namespace ReadItLater.Web.Server
                 {
                     o.RequireHttpsMetadata = false;
                     o.SaveToken = true;
+                    o.TokenValidationParameters.NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier;
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,

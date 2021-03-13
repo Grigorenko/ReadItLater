@@ -1,8 +1,6 @@
 ﻿using ReadItLater.Data.Dtos;
-using ReadItLater.Web.Client.Services.Auth;
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,24 +9,19 @@ namespace ReadItLater.Web.Client.Services.Http
 {
     public class AuthHttpService
     {
-        private readonly UserToken userToken;
         private readonly HttpClient client;
 
-        public AuthHttpService(UserToken userToken, HttpClient client)
+        public AuthHttpService(HttpClient client)
         {
-            this.userToken = userToken;
             this.client = client;
         }
 
-        public async Task<CurrentUser> CurrentUserInfo()
+        public async Task<CurrentUser?> CurrentUserInfoAsync()
         {
-            if (!string.IsNullOrEmpty(userToken.Token))
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken.Token);
-
-            return await client.GetFromJsonAsync<CurrentUser>("auth/currentuserinfo");
+            return await client.GetFromJsonAsync<CurrentUser?>("auth/currentuserinfo");
         }
 
-        public async Task Login(LoginRequest loginRequest)
+        public async Task<CurrentUser?> LoginAsync(LoginRequest loginRequest)
         {
             var result = await client.PostAsJsonAsync("auth/login", loginRequest);
 
@@ -40,24 +33,20 @@ namespace ReadItLater.Web.Client.Services.Http
             var body = await result.Content.ReadAsStringAsync();
             var user = JsonSerializer.Deserialize<Result<CurrentUser>>(body, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-            if (user.IsSuccess)
-                userToken.Token = user.Value.Token;
-
-            else
+            if (!user?.IsSuccess ?? true)
                 throw new Exception("Login failed!");
+
+            return user!.Value;
         }
 
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
-            if (!string.IsNullOrEmpty(userToken.Token))
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken.Token);
-
             var result = await client.PostAsync("auth/logout", null);
 
             result.EnsureSuccessStatusCode();
         }
 
-        public async Task Register(RegisterRequest registerRequest)
+        public async Task RegisterAsync(RegisterRequest registerRequest)
         {
             var result = await client.PostAsJsonAsync("auth/register", registerRequest);
 
