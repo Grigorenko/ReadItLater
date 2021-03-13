@@ -7,14 +7,14 @@ namespace ReadItLater.Web.Client.Shared
     public partial class Settings
     {
         [Inject]
-        public CustomAuthStateProvider stateProvider { get; set; }
+        public IAuthenticationService AuthenticationService { get; set; }
 
         [Parameter]
         public EventCallback FolderEventCallback { get; set; }
 
         public async Task Logout()
         {
-            await stateProvider.Logout();
+            await AuthenticationService.LogoutAsync();
         }
     }
 }

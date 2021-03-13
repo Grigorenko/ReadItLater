@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ReadItLater.Web.Client.Services;
 using System.Threading.Tasks;
 using ReadItLater.Web.Client.Services.Auth;
+using Blazored.LocalStorage;
 
 namespace ReadItLater.Web.Client
 {
@@ -15,7 +16,7 @@ namespace ReadItLater.Web.Client
             builder.RootComponents.Add<App>("#app");
 
             ConfigureServices(builder.Services, builder.HostEnvironment);
-            
+
             var host = builder.Build();
 
             await host.RunAsync();
@@ -24,10 +25,11 @@ namespace ReadItLater.Web.Client
         private static void ConfigureServices(IServiceCollection services, IWebAssemblyHostEnvironment env)
         {
             services.AddSingleton<Context>();
-            services.AddSingleton<UserToken>();
+            services.AddBlazoredLocalStorage();
             services.ConfigureHttpClients(env);
 
             services.AddAuthorizationCore();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<CustomAuthStateProvider>();
             services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<CustomAuthStateProvider>());
         }

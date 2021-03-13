@@ -65,7 +65,7 @@ namespace ReadItLater.Web.Server
             app.UseRouting();
             app.UseRequestResponseMiddleware(options =>
             {
-                options.Request.ShowHeaders = false;
+                options.Request.ShowHeaders = true;
                 options.Request.ShowBody = false;
 
                 options.Response.IsShowed = true;

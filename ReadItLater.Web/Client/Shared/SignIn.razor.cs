@@ -9,7 +9,10 @@ namespace ReadItLater.Web.Client.Shared
     public partial class SignIn : IDisposable
     {
         [Inject]
-        private CustomAuthStateProvider CustomStateProvider { get; set; }
+        private CustomAuthStateProvider StateProvider { get; set; }
+
+        [Inject]
+        private IAuthenticationService AuthenticationService { get; set; }
 
         [Inject]
         private NavigationManager Navigation { get; set; }
@@ -20,7 +23,7 @@ namespace ReadItLater.Web.Client.Shared
         {
             loginRequest = new LoginRequest { UserName = "iam", RememberMe = true };
 
-            CustomStateProvider.AuthenticationStateChanged += _ => AuthenticationStateChangedHandler();
+            StateProvider.AuthenticationStateChanged += _ => AuthenticationStateChangedHandler();
         }
 
         private void AuthenticationStateChangedHandler()
@@ -31,7 +34,7 @@ namespace ReadItLater.Web.Client.Shared
 
         private async Task HandleValidSubmit()
         {
-            await CustomStateProvider.Login(loginRequest);
+            await AuthenticationService.LoginAsync(loginRequest);
         }
 
         private void RedirectToRegistration()
@@ -41,7 +44,7 @@ namespace ReadItLater.Web.Client.Shared
 
         public void Dispose()
         {
-            CustomStateProvider.AuthenticationStateChanged -= _ => AuthenticationStateChangedHandler();
+            StateProvider.AuthenticationStateChanged -= _ => AuthenticationStateChangedHandler();
         }
     }
 }

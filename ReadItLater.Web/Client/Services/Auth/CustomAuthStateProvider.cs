@@ -1,83 +1,51 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Security.Claims;
-using System.Net.Http;
-using System.Linq;
 using Microsoft.AspNetCore.Components.Authorization;
-using ReadItLater.Data.Dtos;
-using ReadItLater.Web.Client.Services.Http;
+using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
+using Blazored.LocalStorage;
 
 namespace ReadItLater.Web.Client.Services.Auth
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly UserToken userToken;
-        private readonly AuthHttpService api;
-        private CurrentUser currentUser;
+        private readonly ILocalStorageService localStorage;
+        private readonly AuthenticationState anonymous;
 
-        public CustomAuthStateProvider(AuthHttpService api, UserToken userToken)
+        public CustomAuthStateProvider(ILocalStorageService localStorage)
         {
-            this.userToken = userToken;
-            this.api = api;
+            this.localStorage = localStorage;
+            anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var identity = new ClaimsIdentity();
+            var token = await localStorage.GetItemAsStringAsync("token");
 
-            try
-            {
-                var userInfo = await GetCurrentUser();
+            if (string.IsNullOrWhiteSpace(token))
+                return anonymous;
 
-                if (userInfo.IsAuthenticated)
-                {
-                    var claims = currentUser.Claims.Select(c => new Claim(c.Key, c.Value)).ToList();
-                    //var claims = new[] { new Claim(ClaimTypes.Name, currentUser.UserName) }
-                    //    .Concat(currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
-                    identity = new ClaimsIdentity(claims, "Server authentication");
-                    this.userToken.Token = userInfo.Token;
-                }
-            }
-
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine("Request failed:" + ex.ToString());
-            }
-
-            return new AuthenticationState(new ClaimsPrincipal(identity));
+            return CreateAuthenticationState(token);
         }
 
-        public async Task Logout()
+        public void NotifyUserLogin(string token)
         {
-            await api.Logout();
-            userToken.Token = null;
-            currentUser = null;
-
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            NotifyAuthenticationStateChanged(Task.FromResult(CreateAuthenticationState(token)));
         }
 
-        public async Task Login(LoginRequest loginParameters)
+        public void NotifyUserLogout()
         {
-            await api.Login(loginParameters);
-
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
         }
 
-        public async Task Register(RegisterRequest registerParameters)
-        {
-            await api.Register(registerParameters);
+        private AuthenticationState CreateAuthenticationState(string token) =>
+            new AuthenticationState(
+                new ClaimsPrincipal(
+                    new ClaimsIdentity(GetClaimsFromToken(token), "Bearer")));
 
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        }
-
-        private async Task<CurrentUser> GetCurrentUser()
-        {
-            if (currentUser != null && currentUser.IsAuthenticated)
-                return currentUser;
-
-            currentUser = await api.CurrentUserInfo();
-
-            return currentUser;
-        }
+        private IEnumerable<Claim> GetClaimsFromToken(string token) => 
+            new JwtSecurityTokenHandler()
+                .ReadJwtToken(token)
+                .Claims;
     }
 }

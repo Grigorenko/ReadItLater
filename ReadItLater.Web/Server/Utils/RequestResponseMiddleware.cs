@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,8 +55,11 @@ namespace ReadItLater.Web.Server.Utils
 
             if (options.Request.ShowHeaders)
             {
-                var headers = request.Headers
+                var all = request.Headers
                     .ToDictionary(a => a.Key, a => a.Value);
+                var headers = options.Request.HeadersWhiteList?.Any() ?? false
+                    ? all.Where(h => options.Request.HeadersWhiteList.Any(i => string.Equals(h.Key, i)))
+                    : all;
 
                 if (headers.Any())
                 {
@@ -215,6 +219,7 @@ namespace ReadItLater.Web.Server.Utils
             /// By default: HttpMethod.Post & HttpMethod.Put
             /// </summary>
             public HttpMethod[] AllowHttpMethods { get; set; } = new[] { HttpMethod.Post, HttpMethod.Put };
+            public string[] HeadersWhiteList { get; set; } = new[] { HeaderNames.Authorization, HeaderNames.ContentType };
         }
 
         public class ResponseOptions
